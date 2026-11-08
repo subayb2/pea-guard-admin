@@ -1,0 +1,12 @@
+<!doctype html><html lang="th"><head><base target="_top"><meta charset="utf-8"></head><body><p>Guard Tour Admin · การเชื่อมต่อข้อมูล</p><script>
+'use strict';
+const origin=<?!= originJson ?>,channel=<?!= channelJson ?>;
+const reply=message=>window.top.postMessage({protocol:'pea-admin-v1',channel,...message},origin);
+const methods=['loginAdmin','getAdminOptions','getAdminDashboard','logoutAdmin'];
+window.addEventListener('message',event=>{
+  const m=event.data;
+  if(event.origin!==origin||event.source!==window.top||!m||m.protocol!=='pea-admin-v1'||m.channel!==channel||m.type!=='request'||typeof m.id!=='string'||m.id.length>80||!methods.includes(m.method))return;
+  google.script.run.withSuccessHandler(result=>reply({id:m.id,result})).withFailureHandler(error=>reply({id:m.id,error:error.message||'อ่านข้อมูลไม่สำเร็จ'})).dashboardCall({method:m.method,args:m.args||{}});
+});
+reply({type:'ready'});
+</script></body></html>
