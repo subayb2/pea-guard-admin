@@ -7,9 +7,12 @@
   "publishedDate": "2026-11-08",
   "allowedOrigins": [
     "http://127.0.0.1:8766",
-    "http://localhost:8766"
+    "http://localhost:8766",
+    "https://subayb2.github.io"
   ],
-  "githubPagesOriginConfigured": false,
+  "githubPagesOriginConfigured": true,
+  "repositoryUrl": "https://github.com/subayb2/pea-guard-admin",
+  "dashboardUrl": "https://subayb2.github.io/pea-guard-admin/",
   "readOnly": true,
   "liveReadVerified": true,
   "testsPassed": 12,

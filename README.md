@@ -2,12 +2,16 @@
 
 หน้าเว็บภาษาไทย ออกแบบด้วย ui-ux-pro-max โทนม่วง PEA สำหรับ GitHub Pages โดยใช้ HTML/CSS/JavaScript ไม่ต้องติดตั้งแพ็กเกจ หน้าเว็บกับ API เป็นคนละโครงการกับแอป รปภ. เดิม
 
+เว็บไซต์: https://subayb2.github.io/pea-guard-admin/
+
+Repository: https://github.com/subayb2/pea-guard-admin
+
 ## สถานะงาน
 
 - สร้างหน้าเว็บและ API แบบอ่านอย่างเดียวแล้ว ผ่าน unit tests 12 กลุ่ม และตรวจหน้าจอคอมพิวเตอร์/มือถือ 375px
-- เผยแพร่ Apps Script API แยก เวอร์ชัน 3 แล้ว และทดสอบล็อกอิน/อ่านข้อมูลจริงผ่านหน้าเว็บในเครื่องสำเร็จ ยังไม่ได้อัปโหลด GitHub
+- เผยแพร่ Apps Script API แยก เวอร์ชัน 3 แล้ว อัปโหลด GitHub ครบ 24 ไฟล์ และ workflow ทดสอบ/เผยแพร่ GitHub Pages สำเร็จเมื่อ 8 พฤศจิกายน 2569
 - `web/config.js` กำหนด URL ของ API ที่เผยแพร่แล้ว หน้าเว็บโหลดข้อมูลจริงหลังตรวจบัญชี Google Admin และรหัสผ่าน ไม่มีข้อมูลจำลองหรือไฟล์ประวัติอยู่ในเว็บ
-- อนุญาต origin ในเครื่อง http://127.0.0.1:8766 และ http://localhost:8766 แล้ว ก่อนเปิด GitHub Pages ต้องเพิ่ม origin ของ GitHub Pages ใน DASHBOARD_ORIGINS และทดสอบบัญชี/เบราว์เซอร์นั้นอีกครั้ง
+- อนุญาต origin http://127.0.0.1:8766, http://localhost:8766 และ https://subayb2.github.io ใน DASHBOARD_ORIGINS แล้ว เว็บไซต์ยังตรวจบัญชี Google Admin และรหัสผ่านตามเดิม
 - ไม่ได้แก้หรือนำ Dashboard เดิมออกจากแอป รปภ. ในงานนี้
 
 ## สิ่งที่มี
