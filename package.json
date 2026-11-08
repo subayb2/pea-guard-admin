@@ -1,0 +1,1 @@
+{"name":"pea-guard-admin","private":true,"type":"module","scripts":{"test":"node tests/test.mjs","backend":"node build-backend.mjs","preview":"node preview.mjs"}}

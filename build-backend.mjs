@@ -1,0 +1,28 @@
+// Reuse reviewed business rules from the guard app, without copying its write endpoints or secrets.
+import fs from 'node:fs';
+const source=fs.readFileSync(new URL('../guard-tour/Code.gs',import.meta.url),'utf8');
+const functions=new Map();const starts=[...source.matchAll(/^function (\w+)\(/gm)];
+for(let i=0;i<starts.length;i++)functions.set(starts[i][1],source.slice(starts[i].index,starts[i+1]?.index??source.length).trim());
+const names=['isAdmin_','assertAdmin_','adminNow_','adminCredential_','adminPasswordHash_','constantEqual_','loginAdmin','assertAdminSession_','logoutAdmin','getAdminOptions','adminFilters_','getAdminDashboard','buildAdminDashboard_','readStations_','hasRosterValue_','coordinate_','assertReady_','logSheet_','sheetDate_','sheetRound_'];
+let code=source.slice(0,source.indexOf('function doGet')).replace('/** Guard Tour — source sheet is read only. Run setupGuardTour once as owner. */','/** Standalone Admin API — no patrol writes or triggers. */')+'\n'+names.map(n=>{if(!functions.has(n))throw new Error('Missing '+n);return functions.get(n);}).join('\n\n');
+code=code.replace("  if(typeof defaultAdminCredential_==='function')return defaultAdminCredential_();\n",'').replace('ผู้ดูแลยังไม่ได้ติดตั้งไฟล์ AdminSecurity.gs','ให้ผู้ดูแลกำหนด ADMIN_PASSWORD_SALT และ ADMIN_PASSWORD_HASH ใน Script Properties');
+code=code.replaceAll("props.getProperty('LOG_SPREADSHEET_ID')","(props.getProperty('LOG_SPREADSHEET_ID')||CONFIG.LOG_SPREADSHEET_ID)");
+code=code.replace(functions.get('assertReady_'),"function assertReady_(){if(!CONFIG.LOG_SPREADSHEET_ID)throw new Error('ยังไม่ได้ตั้งค่าชีตประวัติ');}");
+code=code.replace("const id=PropertiesService.getScriptProperties().getProperty('LOG_SPREADSHEET_ID');","const id=PropertiesService.getScriptProperties().getProperty('LOG_SPREADSHEET_ID')||CONFIG.LOG_SPREADSHEET_ID;");
+code=code.replaceAll("props.getProperty('IDEL_MONITORING_ENABLED')==='true'",'null');
+code=code.replace('function getAdminDashboard(input)','function readAdminDashboard_(input)');
+code=code.replace('closedRounds:filteredRounds.length,patrolledRounds:0,idelRounds:0','closedRounds:filteredRounds.length,patrolledRounds:0,idelRounds:0,earlyCheckins:0,onTimeCheckins:0,lateCheckins:0,unknownTimeCheckins:0');
+code=code.replace('unit:s.unit,checkins:0,closedRounds:0','unit:s.unit,checkins:0,earlyCheckins:0,onTimeCheckins:0,lateCheckins:0,unknownTimeCheckins:0,closedRounds:0');
+code=code.replace("const g=groups.get(row.stationCode);g.checkins++;","const g=groups.get(row.stationCode);g.checkins++;const timing=({'Early':'earlyCheckins','On Time':'onTimeCheckins','Late':'lateCheckins'})[row.status]||'unknownTimeCheckins';summary[timing]++;g[timing]++;");
+const bridge=fs.readFileSync(new URL('./backend/Bridge.gs',import.meta.url),'utf8');
+code=code.replace('  const page=v=>',"  if(input.round&&!/^(?:[01]\\d|2[0-3]):00$/.test(String(input.round)))throw new Error('รอบเวลาไม่ถูกต้อง');\n  const page=v=>");
+code=code.replace('stationCode:String(input.stationCode||\'\'),','unit:String(input.unit||\'\'),round:String(input.round||\'\'),stationCode:String(input.stationCode||\'\'),');
+code=code.replace('stations.filter(s=>!f.stationCode||s.code===f.stationCode)','stations.filter(s=>(!f.unit||s.unit===f.unit)&&(!f.stationCode||s.code===f.stationCode))');
+code=code.replace('r.patrolDate<=f.endDate;','r.patrolDate<=f.endDate&&(!f.round||chartRound_(r)===f.round);');
+code=code.replace('  return {filters:f,asOf:', '  const result={filters:f,asOf:');
+code=code.replace(')),f.roundPage)};', ')),f.roundPage)};\n  return chartAggregates_(result,filteredLogs,filteredRounds);');
+code=code.replaceAll('SpreadsheetApp.openById(', 'readBook_(');
+const adapter=fs.readFileSync(new URL('./backend/SheetsReader.gs',import.meta.url),'utf8');
+const charts=fs.readFileSync(new URL('./backend/Charts.gs',import.meta.url),'utf8');
+fs.writeFileSync(new URL('./backend/Code.gs',import.meta.url),code+'\n\n'+bridge+'\n\n'+adapter+'\n\n'+charts);
+console.log('Built standalone read-only Admin backend. No credential file was read.');

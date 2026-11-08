@@ -1,0 +1,17 @@
+{
+  "scriptId": "1SL9Nosax6B_bOWhtnN8womUMrWdqWZx6dqnrnqHjgaNyvF70QCT9FeGo",
+  "deploymentId": "AKfycbzJkQghDeRhNsRiI0NNUI3mKvZsqB0UJVz8bm4zs7cFVw9WK_8CpPa2qyZaKJKETABgsw",
+  "url": "https://script.google.com/macros/s/AKfycbzJkQghDeRhNsRiI0NNUI3mKvZsqB0UJVz8bm4zs7cFVw9WK_8CpPa2qyZaKJKETABgsw/exec",
+  "version": 3,
+  "spreadsheetId": "1JRAQ9WhZ1Ew5ibAnX5NsRVURPHA1HFSYQ7bfGIeDYOQ",
+  "publishedDate": "2026-11-08",
+  "allowedOrigins": [
+    "http://127.0.0.1:8766",
+    "http://localhost:8766"
+  ],
+  "githubPagesOriginConfigured": false,
+  "readOnly": true,
+  "liveReadVerified": true,
+  "testsPassed": 12,
+  "chartSchema": 1
+}
