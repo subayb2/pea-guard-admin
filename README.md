@@ -9,9 +9,8 @@ Repository: https://github.com/subayb2/pea-guard-admin
 ## สถานะงาน
 
 - สร้างหน้าเว็บและ API แบบอ่านอย่างเดียวแล้ว ผ่าน unit tests 12 กลุ่ม และตรวจหน้าจอคอมพิวเตอร์/มือถือ 375px
-- เผยแพร่ Apps Script API แยก เวอร์ชัน 3 แล้ว อัปโหลด GitHub ครบ 24 ไฟล์ และ workflow ทดสอบ/เผยแพร่ GitHub Pages สำเร็จเมื่อ 8 พฤศจิกายน 2569
-- `web/config.js` กำหนด URL ของ API ที่เผยแพร่แล้ว หน้าเว็บโหลดข้อมูลจริงหลังตรวจบัญชี Google Admin และรหัสผ่าน ไม่มีข้อมูลจำลองหรือไฟล์ประวัติอยู่ในเว็บ
-- อนุญาต origin http://127.0.0.1:8766, http://localhost:8766 และ https://subayb2.github.io ใน DASHBOARD_ORIGINS แล้ว เว็บไซต์ยังตรวจบัญชี Google Admin และรหัสผ่านตามเดิม
+- Apps Script เวอร์ชัน 4 เปิด Dashboard ที่ URL โดยตรงใน `deployment.json` และตรวจบัญชี Google Admin ก่อนแสดงช่องรหัสผ่าน
+- GitHub Pages มีปุ่มเปิด Dashboard ไปยัง URL ของ Google ที่กำหนดไว้ ส่วนรายงานเรียกข้อมูลผ่าน `google.script.run` บน Apps Script
 - ไม่ได้แก้หรือนำ Dashboard เดิมออกจากแอป รปภ. ในงานนี้
 
 ## สิ่งที่มี
@@ -35,16 +34,17 @@ IDEL คิดรายสถานีต่อรอบชั่วโมง �
 ## โครงสร้าง
 
 ```text
-web/                     อัปโหลดส่วนนี้เป็นเว็บไซต์ static
-  index.html
+web/
+  index.html             ทางเข้า GitHub Pages
+  dashboard.html         เทมเพลตหน้ารายงานสำหรับ Apps Script
   config.js              มีเฉพาะ URL สาธารณะของ API
   assets/
 backend/
   Code.gs                API แยก อ่าน Data / PatrolLogs / StationRounds เท่านั้น
-  Bridge.html            สะพานข้อความ iframe ระหว่าง GitHub กับ google.script.run
+  Dashboard.html         ผลลัพธ์จาก node build-dashboard.mjs
   appsscript.json        Sheets read-only scope
   Bridge.gs              ต้นฉบับประกอบ Code.gs ไม่ต้องอัปโหลดซ้ำ
-.github/workflows/       Workflow เผยแพร่ web/ ขึ้น GitHub Pages
+.github/workflows/       Workflow เผยแพร่หน้าเข้าใช้งานและ assets ที่จำเป็น
 design-system/MASTER.md  แนวทางออกแบบจาก ui-ux-pro-max
 tests/                   ทดสอบด้วย fixtures สังเคราะห์ ไม่ใช่ประวัติจริง
 ```
@@ -60,7 +60,7 @@ npm test
 npm run preview
 ```
 
-เปิด `http://127.0.0.1:8766/` อย่าเปิด `index.html` ด้วย file:// เพราะใช้ JavaScript modules
+เปิด `http://127.0.0.1:8766/` เพื่อตรวจหน้าเข้าใช้งาน การล็อกอินและข้อมูลจริงใช้ URL ของ Apps Script ใน `deployment.json`
 
 ## API ที่เชื่อมอยู่แล้ว
 
@@ -69,7 +69,7 @@ npm run preview
 ## ติดตั้ง API ใหม่ในบัญชีอื่น (กรณีต้องการย้ายระบบ)
 
 1. สร้าง **Apps Script โครงการใหม่** แยกจากแอป รปภ. ชื่อเช่น `Guard Tour Admin API` ภายใต้บัญชีเจ้าของที่อ่านชีตต้นทางและประวัติได้
-2. ใส่ `backend/Code.gs`, `backend/Bridge.html` (ชื่อไฟล์ใน Apps Script คือ Bridge) และ `backend/appsscript.json` ไม่ใส่ Bridge.gs หรือ SheetsReader.gs ซ้ำ เพราะรวมใน Code.gs แล้ว
+2. ใส่ `backend/Code.gs`, `backend/Dashboard.html` (ชื่อไฟล์ใน Apps Script คือ Dashboard) และ `backend/appsscript.json` โค้ดจาก Bridge.gs และ SheetsReader.gs รวมอยู่ใน Code.gs แล้ว
 3. ตั้ง Script Properties:
 
 | Key | ค่า |
@@ -77,27 +77,25 @@ npm run preview
 | `ADMIN_PASSWORD_SALT` | คัดลอกจากตัวตรวจรหัสเดิมฝั่งเซิร์ฟเวอร์ |
 | `ADMIN_PASSWORD_HASH` | คัดลอก salted SHA-256 hash เดิมให้คู่กับ salt |
 | `ADMIN_EMAILS` | อีเมล Admin เพิ่มเติม คั่นด้วยจุลภาค; เจ้าของโครงการเป็น Admin เริ่มต้น |
-| `DASHBOARD_ORIGINS` | origin ที่อนุญาต เช่น `https://YOUR-USER.github.io` และ `http://127.0.0.1:8766` คั่นด้วยจุลภาค ไม่มี path/เครื่องหมาย slash ท้าย |
 | `LOG_SPREADSHEET_ID` | ไม่จำเป็นหากใช้ชีตประวัติเดิม ซึ่งกำหนดไว้ใน CONFIG แล้ว |
 
 ถ้าระบบเดิมใช้ AdminSecurity.gs ให้คัดลอกเฉพาะค่า salt/hash ไป Script Properties ใหม่ภายในบัญชีของคุณ **ไม่อัปโหลดไฟล์นั้นหรือค่า verifier ขึ้น GitHub** ไม่มีการตั้งรหัสผ่านใหม่ในชุดนี้
 
 4. เผยแพร่เป็น Web App ใหม่ รันในฐานะเจ้าของ และให้บัญชี Google ที่ใช้เป็น Admin เข้าถึงได้ อย่าสร้าง Trigger IDEL ในโครงการ Dashboard
 5. เจ้าของลงชื่อ Google ให้เรียบร้อยและเปิด URL API ในแท็บปกติก่อน กฎอีเมลของ Google อาจไม่ส่ง active-user email ให้บางบัญชี โดยเฉพาะนอกโดเมน โค้ดจะปฏิเสธแทนการใช้ effective-user แทนตัวผู้เข้าชม ไม่ลดการตรวจสิทธิ์เพื่อแก้ปัญหานี้
-6. นำ URL ใหม่ `/exec` มาใส่ `backendUrl` ใน `web/config.js` หรือกดตั้งค่าการเชื่อมต่อบนหน้าเว็บ URL แอป รปภ. เดิมใช้แทนไม่ได้
-7. ทดสอบ Admin จริง / บุคคลที่ไม่ได้รับอนุญาต / session หมดอายุ / logout / ตัวกรองและการแบ่งหน้าบน origin ที่จะใช้จริง
+6. ใส่ URL ใหม่ `/exec` ในลิงก์หน้า `web/index.html` และลิงก์เลือกบัญชีใน `web/dashboard.html` จากนั้นรัน `node build-dashboard.mjs` เพื่อสร้าง HTML สำหรับ Apps Script
+7. ทดสอบ Admin จริง / บุคคลที่ไม่ได้รับอนุญาต / session หมดอายุ / logout / ตัวกรองและการแบ่งหน้า
 
-เชื่อมด้วย iframe และ postMessage เพราะ static GitHub Pages ไม่มีเซิร์ฟเวอร์เก็บข้อมูลลับ ไม่ใส่รหัสผ่านใน query string หรือใช้ JSONP อ่านข้อมูลส่วนตัว Bridge ตรวจ origin, channel และแหล่งข้อความ และฝั่ง API ตรวจบัญชี Google + session ทุกครั้ง หากเบราว์เซอร์หรือ Google บล็อก iframe/cookies จะแจ้งเชื่อมต่อไม่สำเร็จ ต้องตรวจการทำงานจริงบนสภาพแวดล้อมเผยแพร่ก่อนเปิดใช้
+Apps Script ตรวจบัญชี Google และเซสชันก่อนอ่านรายงานทุกครั้ง เซสชันอยู่ในหน่วยความจำหน้าเว็บและหมดอายุใน 30 นาที บัญชีที่ Google ไม่ส่งอีเมลผู้ใช้จริงจะเห็นคำแนะนำให้เลือกบัญชีใหม่
 
 Dashboard API ไม่มีการเขียน PatrolLogs/StationRounds และไม่มี endpoint บันทึกเดินตรวจ แคชกับ lock เป็นของโครงการใหม่ แต่ถ้ารันด้วยเจ้าของบัญชีเดียวกันยังใช้โควตาบัญชีร่วมกัน และยังอ่านไฟล์ชีตเดิมร่วมกัน
 
 ## อัปโหลด GitHub
 
 1. นำ **เนื้อหาโฟลเดอร์ admin-dashboard** ไปไว้ที่ root ของ repository ใหม่ รวม `.github/` ด้วย
-2. ใส่ URL API ใหม่ใน `web/config.js` หากต้องการค่าเริ่มต้นสำหรับทุกเครื่อง
+2. กำหนดลิงก์ Google Apps Script ที่ `web/index.html`
 3. ที่ Settings → Pages เลือก Source: GitHub Actions จากนั้น push ไป branch `main` หรือเรียก workflow
-4. Workflow ทดสอบโค้ดแล้วเผยแพร่เฉพาะ `web/` รองรับ repository path ด้วย relative asset paths
-5. เพิ่ม origin ของ GitHub Pages ใน `DASHBOARD_ORIGINS` ของ API และทดสอบอ่านชีตจริงก่อนใช้งาน
+4. Workflow ทดสอบโค้ดและเผยแพร่เฉพาะหน้าเข้าใช้งาน CSS และโลโก้
 
 ไม่มี credentials, ประวัติจริง, snapshot หรือ AdminSecurity.gs อยู่ในแพ็กเกจนี้ แม้ backend code จะมี Sheet IDs ก็ยังต้องผ่านสิทธิ์ Google และ password/session; ID ไม่ใช่กุญแจเปิดชีต
 
