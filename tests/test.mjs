@@ -2,10 +2,9 @@ import fs from 'node:fs';
 import vm from 'node:vm';
 import assert from 'node:assert/strict';
 import harness,{password} from './harness.mjs';
-import {validateBackendUrl,DashboardApi} from '../web/assets/api.js';
 const root=new URL('../',import.meta.url),read=p=>fs.readFileSync(new URL(p,root),'utf8');
 let passed=0;function test(name,fn){fn();console.log('PASS '+name);passed++;}
-const backend=read('backend/Code.gs'),html=read('web/index.html'),app=read('web/assets/app.js');
+const backend=read('backend/Code.gs'),html=read('web/dashboard.html'),app=read('web/assets/app.js');
 test('backend compiles, has no write endpoints, and requests read-only Sheets access',()=>{
   new vm.Script(backend);for(const name of ['checkIn','setupGuardTour','setupIdleMonitoring','sweepMissedRounds_'])assert.ok(!backend.includes('function '+name+'('));
   assert.ok(!/\.setValues\(|\.appendRow\(|\.insertSheet\(/.test(backend));assert.ok(!backend.includes('defaultAdminCredential_'));
@@ -36,20 +35,24 @@ test('cached report expires and explicit refresh rereads the underlying records'
 test('allowed methods cannot invoke patrol writes or inherit object methods',()=>{
   const h=harness();for(const method of ['checkIn','setupProduction','constructor','toString','__proto__'])assert.throws(()=>h.context.dashboardCall({method,args:{}}),/ไม่อนุญาต/);
 });
-test('bridge rejects unapproved origins and malformed channel IDs',()=>{
-  const h=harness();h.props.DASHBOARD_ORIGINS='https://example.github.io';
-  assert.throws(()=>h.context.doGet({parameter:{origin:'https://evil.example',channel:'a'.repeat(32)}}),/ไม่ได้อนุญาต/);
-  assert.throws(()=>h.context.doGet({parameter:{origin:'https://example.github.io',channel:'x'}}),/ไม่ได้อนุญาต/);
+test('direct access denies non-admins before serving the password form and rejects the retired bridge',()=>{
+  const h=harness();
+  h.context.HtmlService={
+    createHtmlOutput:body=>({body,setTitle(){return this;},addMetaTag(){return this;}}),
+    createHtmlOutputFromFile:file=>({file,setTitle(){return this;},addMetaTag(){return this;}})
+  };
+  assert.match(h.context.doGet({}).body,/บัญชีนี้ยังเข้า Dashboard ไม่ได้/);
+  h.context.Session.getActiveUser=()=>({getEmail:()=>'owner@example.test'});
+  assert.equal(h.context.doGet({}).file,'Dashboard');
+  assert.throws(()=>h.context.doGet({parameter:{origin:'https://subayb2.github.io'}}),/เปิด Dashboard โดยตรง/);
+  assert.ok(!backend.includes('ALLOWALL'));
 });
-test('client validates the deployment URL and accepts only its authenticated channel peer',()=>{
-  for(const value of ['http://script.google.com/macros/s/a/exec','https://evil.test/macros/s/a/exec','https://script.google.com/macros/s/a/exec?token=a'])assert.throws(()=>validateBackendUrl(value));
-  assert.equal(validateBackendUrl('https://script.google.com/macros/s/example/exec'),'https://script.google.com/macros/s/example/exec');
-  const api=new DashboardApi('https://script.google.com/macros/s/example/exec');let connected=0;api.resolveReady=()=>connected++;api.rejectReady=()=>{};
-  api.onMessage({origin:'https://evil.test',source:{},data:{protocol:'pea-admin-v1',channel:api.channel,type:'ready'}});assert.equal(connected,0);
-  const peer={};api.onMessage({origin:'https://n-example-script.googleusercontent.com',source:peer,data:{protocol:'pea-admin-v1',channel:api.channel,type:'ready'}});assert.equal(connected,1);assert.equal(api.peer,peer);
-  let resolved=0;api.pending.set('one',{timer:null,resolve:()=>resolved++,reject(){}});
-  api.onMessage({origin:'https://n-example-script.googleusercontent.com',source:{},data:{protocol:'pea-admin-v1',channel:api.channel,id:'one',result:{}}});assert.equal(resolved,0);
-  api.onMessage({origin:'https://n-example-script.googleusercontent.com',source:peer,data:{protocol:'pea-admin-v1',channel:api.channel,id:'one',result:{}}});assert.equal(resolved,1);
+test('public entry has a fixed Google destination and no credential collection',()=>{
+  const entry=read('web/index.html'),source=read('backend/Dashboard.html');
+  assert.match(entry,/href="https:\/\/script\.google\.com\/macros\/s\/[\w-]+\/exec"/);
+  assert.doesNotMatch(entry,/<(?:input|form|iframe|script)\b/i);
+  assert.doesNotMatch(source,/localStorage|postMessage|settingsDialog/);
+  new vm.Script(source.match(/<script>\s*([\s\S]*?)<\/script>/)[1]);
 });
 test('filters reconcile station/day totals and Sheets date cells are normalized',()=>{
   const h=harness();h.context.Session.getActiveUser=()=>({getEmail:()=>'owner@example.test'});
@@ -92,7 +95,7 @@ test('UI has labels, consistent IDs, safe DOM rendering and honest unloaded stat
 {
   const nodes=new Map();const element=()=>({style:{},dataset:{},children:[],value:'',hidden:false,textContent:'',setAttribute(k,v){this[k]=v;},getAttribute(k){return this[k];},append(...children){this.children.push(...children);},replaceChildren(...children){this.children=children;},querySelectorAll(){return [];},focus(){}});
   const document={getElementById(id){if(!nodes.has(id))nodes.set(id,element());return nodes.get(id);},querySelectorAll(){return [];},createElement:element};
-  const c=vm.createContext({document,console,Intl,Date,URL,Error,Option:class{constructor(text,value){this.text=text;this.value=value;}},localStorage:{getItem(){return null;}},location:{origin:'http://localhost'},config:{backendUrl:'',patrolUrl:'https://example.test'},DashboardApi:class{}});
+  const c=vm.createContext({document,console,Intl,Date,URL,Error,clearTimeout,google:{script:{run:{}}},Option:class{constructor(text,value){this.text=text;this.value=value;}},config:{patrolUrl:'https://example.test'},DashboardApi:class{}});
   vm.runInContext(app.replace(/^import .*;$/gm,''),c);
   vm.runInContext("state.options={stations:[{code:'AAA',name:'สถานี A'}]};state.token='test-token';rpc=async()=>({filters:{startDate:'2026-11-05',endDate:'2026-11-05',stationCode:'',roundPage:1,logPage:1},asOf:'2026-11-05T10:00:00Z',summary:{stationCount:1,checkins:2,earlyCheckins:1,onTimeCheckins:1,lateCheckins:0,unknownTimeCheckins:0,patrolledRounds:1,idelRounds:3,closedRounds:4},daily:[{date:'2026-11-05',patrolled:1,idel:3}],stations:[{code:'AAA',name:'สถานี A',patrolledRounds:1,idelRounds:3}],logs:{total:2,page:1,pages:1,items:[{receivedAt:'2026-11-05T09:00:00Z',stationName:'สถานี A',guardName:'ตัวอย่าง',checkpointId:'CP1',round:'16:00',status:'On Time',checkpointDistanceMeters:12}]},rounds:{total:4,page:1,pages:1,items:[{patrolDate:'2026-11-05',scheduledAt:'2026-11-05T09:00:00Z',stationName:'สถานี A',status:'IDEL',checkinCount:0}]},monitoringEnabled:null});",c);
   await vm.runInContext("load({startDate:'2026-11-05',endDate:'2026-11-05'})",c);
