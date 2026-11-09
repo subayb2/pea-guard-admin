@@ -194,16 +194,22 @@ function sheetDate_(value){return value instanceof Date?Utilities.formatDate(val
 
 function sheetRound_(value,scheduled){return value instanceof Date?Utilities.formatDate(scheduled instanceof Date?scheduled:value,CONFIG.TIMEZONE,'HH:mm'):String(value||'');}
 
-// This source is appended to Code.gs by build-backend.mjs. Upload Code.gs and Bridge.html only.
+// This source is appended to Code.gs by build-backend.mjs.
 function webAppUrl_(){return 'https://script.google.com/macros/s/AKfycbypqL6MePFB--u1dKG5AJaNeG_00I35KZ2t5QxJExhx16ccZCsFuE9tW115hX5rb6-W/exec';}
 function doGet(e){
-  const params=e&&e.parameter||{};
-  if(!params.origin)return HtmlService.createHtmlOutput('<h1>Guard Tour Admin API</h1><p>เปิด Dashboard จากเว็บไซต์ที่ตั้งค่าไว้ และลงชื่อ Google ด้วยบัญชี Admin</p>');
-  const allowed=String(PropertiesService.getScriptProperties().getProperty('DASHBOARD_ORIGINS')||'').split(/[\s,;]+/).filter(Boolean);
-  if(!allowed.includes(params.origin)||!/^https?:\/\/[a-zA-Z0-9.\-]+(?::\d+)?$/.test(params.origin)||!/^[a-f0-9]{32}$/.test(params.channel||''))throw new Error('ไม่ได้อนุญาตเว็บไซต์ Dashboard นี้');
-  const template=HtmlService.createTemplateFromFile('Bridge');
-  template.originJson=JSON.stringify(params.origin);template.channelJson=JSON.stringify(params.channel);
-  return template.evaluate().setTitle('Guard Tour Admin API').setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+  if(e?.parameter?.origin)throw new Error('กรุณาเปิด Dashboard โดยตรงบน Google Apps Script');
+  if(!isAdmin_()){
+    return HtmlService.createHtmlOutput(
+      '<main style="max-width:38rem;margin:3rem auto;padding:1.25rem;font:16px/1.7 system-ui;color:#350d3e">' +
+      '<h1>บัญชีนี้ยังเข้า Dashboard ไม่ได้</h1>' +
+      '<p>เปิด Dashboard ในโปรไฟล์เบราว์เซอร์ที่ลงชื่อ Google ด้วยบัญชี Admin ที่ได้รับอนุญาต หากเปิดจากแอปแชต ให้เปิดลิงก์ในเบราว์เซอร์หลัก</p>' +
+      '<a target="_top" href="https://accounts.google.com/AccountChooser?continue=' + encodeURIComponent(webAppUrl_()) + '">เลือกบัญชี Google</a></main>'
+    ).setTitle('Guard Tour · ตรวจสอบบัญชี Google')
+      .addMetaTag('viewport','width=device-width, initial-scale=1');
+  }
+  return HtmlService.createHtmlOutputFromFile('Dashboard')
+    .setTitle('Guard Tour — Admin Dashboard')
+    .addMetaTag('viewport','width=device-width, initial-scale=1');
 }
 function dashboardCall(input){
   if(!input||typeof input!=='object')throw new Error('คำขอไม่ถูกต้อง');

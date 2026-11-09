@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="th">
+<head><meta name="referrer" content="no-referrer"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#720969"><meta name="description" content="Dashboard สำหรับติดตามการเดินตรวจสถานีไฟฟ้า"><title>Guard Tour — Admin Dashboard</title><link rel="icon" href="https://subayb2.github.io/pea-guard-admin/assets/pea_logo.png" type="image/png"><style>:root{--primary:#720969;--primary-dark:#56084f;--sidebar:#350d3e;--bg:#f7f7fa;--surface:#fff;--text:#262431;--muted:#6a6878;--line:#e9e7ee;--green:#147456;--green-bg:#eaf5ef;--red:#b43d49;--red-bg:#fff0f1;--gold:#946415;--gold-bg:#fbf2df;--purple-bg:#f4eaf5;--radius:14px;--font:'Noto Sans Thai','Leelawadee UI',Tahoma,sans-serif}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:24px}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.65 var(--font)}button,input,select{font:inherit}button,a,input,select{-webkit-tap-highlight-color:transparent}button,a{touch-action:manipulation}button{cursor:pointer}a{color:inherit;text-decoration:none}button:disabled{opacity:.45;cursor:not-allowed}button:hover:not(:disabled){filter:brightness(.97)}:focus-visible{outline:3px solid #ab5da5;outline-offset:3px}button,input,select{min-height:44px}h1,h2,p{margin:0}h1{font-size:29px;line-height:1.4;letter-spacing:-.7px}h2{font-size:16px;font-weight:600}input,select{border:1px solid #d9d5e1;border-radius:8px;background:#fff;color:var(--text);padding:9px 12px;min-width:0;width:100%}label{display:block;font-size:12px;font-weight:500}label>span{display:block;margin-bottom:7px}.sidebar{position:fixed;inset:0 auto 0 0;width:234px;background:var(--sidebar);color:#fff;padding:28px 18px;display:flex;flex-direction:column;z-index:10}.brand{display:flex;align-items:center;gap:12px;font-size:22px;font-weight:600;letter-spacing:-.5px;padding:0 8px 43px}.brand small{display:block;font-size:9px;color:#d9c4dc;letter-spacing:1.7px;margin-top:1px;font-weight:500}.nav-label{font-size:10px;color:#c1a5c6;padding:0 15px 12px}.nav-link{display:flex;gap:12px;align-items:center;padding:13px 14px;border-radius:9px;color:#dfcfe3;margin-bottom:6px;font-size:12px;white-space:nowrap}.nav-link.active{background:#ffffff17;color:#fff;box-shadow:inset 3px 0 #e9bd6b}.nav-link:hover{background:#ffffff14}.sidebar-bottom{margin-top:auto;padding:24px 10px 0;border-top:1px solid #ffffff1c;font-size:11px;color:#dfcfe3}.sidebar-bottom p{font-size:10px;color:#bba1c1;margin:5px 0 22px}.sidebar-bottom a{display:flex;align-items:center;justify-content:space-between}.system-label{display:flex;align-items:center;gap:7px}.status-dot{height:6px;width:6px;background:#d8b76e;border-radius:50%}.workspace{margin-left:234px}.topbar{height:78px;border-bottom:1px solid var(--line);background:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 36px}.breadcrumb{font-size:12px;color:var(--muted)}.breadcrumb span{margin:0 12px;color:#c9c4d0}.breadcrumb strong{color:var(--text);font-weight:500}.top-actions{display:flex;align-items:center;gap:16px}.connection{font-size:11px;color:var(--muted);padding-right:16px;border-right:1px solid var(--line)}.connection.connected{color:var(--green)}.avatar{width:34px;height:34px;background:var(--purple-bg);color:var(--primary);display:grid;place-items:center;border-radius:50%;font-size:11px;font-weight:700}main{max-width:1680px;margin:auto;padding:32px 36px 20px}.page-heading{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;gap:18px}.eyebrow{font-size:9px;letter-spacing:1.9px;color:var(--primary);font-weight:600;margin-bottom:6px}.page-heading p{color:var(--muted);font-size:12px;margin-top:7px}.button{border:1px solid transparent;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:10px 17px;font-weight:500;white-space:nowrap;transition:background .15s;font-size:12px}.primary{background:var(--primary);color:white}.secondary{background:white;color:var(--text);border-color:#dedbe5}.icon-button{border:1px solid var(--line);background:#fff;border-radius:8px;width:36px;min-width:36px;padding:9px;display:inline-flex;align-items:center;justify-content:center}.topbar .icon-button{border:0}.small{min-height:36px;padding:7px 12px;font-size:11px}.ghost{border:0;background:transparent;font-size:11px;color:var(--muted)}svg{width:18px;height:18px;display:block;flex-shrink:0}[data-icon]{display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}.login-panel{border:1px solid #e7d8e8;background:linear-gradient(100deg,#fcf8fc,#fff);padding:19px 21px;border-radius:var(--radius);margin-bottom:22px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}.login-copy{display:flex;gap:13px;align-items:center}.login-copy h2{font-size:14px}.login-copy p{font-size:11px;color:var(--muted);margin-top:3px}.login-icon{height:40px;width:40px;border-radius:11px;color:var(--primary);background:#f2e5f3}.login-panel form{display:flex;gap:9px}.login-panel input{max-width:220px;font-size:12px;background:#fff}.login-error{font-size:12px;color:var(--red);width:100%;margin:8px 0 0}.filters{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px 22px 0;margin-bottom:22px}.filters fieldset{border:0;margin:0;padding:0;display:grid;grid-template-columns:minmax(170px,1.7fr) minmax(150px,1fr) minmax(150px,1fr) auto;gap:17px;align-items:end}.filters input,.filters select{font-size:12px}.filter-foot{margin-top:18px;border-top:1px solid #f1eff4;padding:12px 0;display:flex;gap:16px;justify-content:space-between;color:var(--muted);font-size:10px}.filter-foot>span{display:flex;align-items:center;gap:6px}.filter-foot svg{width:13px;height:13px}.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-bottom:22px}.metric{padding:20px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);position:relative}.metric-top{font-size:11px;color:var(--muted);display:flex;align-items:center;justify-content:space-between;gap:5px}.metric-icon{height:32px;width:32px;border-radius:9px}.purple{color:var(--primary);background:var(--purple-bg)}.green{color:var(--green);background:var(--green-bg)}.red{color:var(--red);background:var(--red-bg)}.gold{color:var(--gold);background:var(--gold-bg)}.metric strong{display:block;font-size:34px;font-weight:600;letter-spacing:-1px;line-height:1.6;font-variant-numeric:tabular-nums;margin:9px 0 4px}.metric>span{font-size:9px;color:var(--muted);display:block}.analysis-grid{display:grid;grid-template-columns:1.15fr 1fr;gap:22px;margin-bottom:22px}.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);min-width:0;overflow:hidden}.panel-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:22px 22px 12px}.panel-heading p{color:var(--muted);font-size:10px;margin-top:4px}.subtle-tag,.count{font-size:10px;border-radius:6px;color:var(--muted);padding:4px 9px;background:var(--bg);white-space:nowrap}.legend{display:flex;gap:17px;align-items:center;padding:4px 22px;font-size:10px;color:var(--muted)}.legend>span{display:flex;align-items:center;gap:6px}.dot{width:7px;height:7px;border-radius:2px}.green-bg{background:var(--green)}.red-bg{background:var(--red)}.daily-chart{min-height:235px;max-height:450px;overflow:auto;padding:20px 22px}.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:195px;color:var(--muted);text-align:center;gap:9px}.empty-state>[data-icon]{border-radius:12px;background:var(--bg);height:45px;width:45px;color:#9d94aa;margin-bottom:4px}.empty-state strong{font-size:12px;font-weight:500}.empty-state p{font-size:10px;color:var(--muted)}.panel-note{border-top:1px solid #f1eff4;margin:0 22px;padding:13px 0;color:var(--muted);font-size:9px}.table-scroll{overflow:auto;max-width:100%}table{border-collapse:collapse;width:100%;white-space:nowrap;text-align:left;font-size:11px}th{font-size:10px;font-weight:500;color:var(--muted);background:#fbfafc;padding:13px 22px;border-bottom:1px solid var(--line)}td{padding:13px 22px;border-bottom:1px solid #f1eff4}tbody tr:last-child td{border-bottom:0}tbody tr:hover{background:#fcfafd}.num{text-align:right;font-variant-numeric:tabular-nums}.empty-cell{text-align:center;color:var(--muted);height:203px;font-size:11px}.empty-cell.tall{height:155px}.pagination{display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--line);padding:12px 22px;color:var(--muted);font-size:10px;gap:10px}.pagination>div{display:flex;gap:6px}.pagination .icon-button{min-height:32px}.details{scroll-margin-top:24px}.details .panel-heading{padding-bottom:20px}.tabs{display:flex;gap:25px;padding:0 22px;border-bottom:1px solid var(--line)}.tab{display:flex;gap:9px;align-items:center;background:none;border:0;border-bottom:2px solid transparent;font-size:12px;color:var(--muted);padding:10px 0 13px}.tab.active{color:var(--primary);border-bottom-color:var(--primary);font-weight:600}.tab>span{padding:1px 7px;border-radius:5px;background:var(--bg);font-size:10px}.tab.active>span{background:var(--purple-bg)}footer{display:flex;justify-content:space-between;font-size:9px;color:var(--muted);padding:22px 0 5px;gap:14px}.message{background:#f3edf7;padding:13px 17px;border:1px solid #d9c7df;border-radius:8px;margin-bottom:20px;font-size:12px}.message.error{background:var(--red-bg);border-color:#e6b8bf;color:var(--red)}.message.busy::before{content:'';display:inline-block;border:2px solid #d3b6d0;border-top-color:var(--primary);width:12px;height:12px;border-radius:50%;animation:spin 1s linear infinite;margin-right:10px}.station-button{border:0;background:none;padding:0;color:var(--primary);min-height:28px;text-align:left;font-size:11px}.station-code{display:block;font-size:9px;color:var(--muted)}.pill{display:inline-flex;padding:3px 9px;font-size:10px;background:var(--green-bg);color:var(--green);border-radius:5px}.pill.idel,.pill.late{background:var(--red-bg);color:var(--red)}.pill.early{background:var(--gold-bg);color:var(--gold)}.bar-row{display:grid;grid-template-columns:62px 1fr 70px;align-items:center;gap:10px;background:none;border:0;padding:5px 0;width:100%;font-size:10px;color:var(--muted)}.bar-track{display:flex;height:16px;background:#f3f1f6;border-radius:4px;overflow:hidden}.bar{height:100%;background:var(--green);min-width:0}.bar.idel{background:var(--red)}.bar-values{text-align:right;font-variant-numeric:tabular-nums}dialog{border:1px solid var(--line);border-radius:18px;padding:28px;max-width:540px;width:calc(100% - 32px);color:var(--text);box-shadow:0 24px 100px #24122930}dialog::backdrop{background:#21112780;backdrop-filter:blur(3px)}.dialog-heading{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:12px}dialog p{font-size:12px;color:var(--muted);margin:12px 0 20px}dialog label{margin-bottom:7px}dialog input{font-size:12px}dialog .button{margin-top:18px;width:100%}dialog a{color:var(--primary);font-size:11px;text-decoration:underline}code{font-size:11px;overflow-wrap:anywhere}dialog .small-text{font-size:10px;margin:12px 0}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}.skip{position:absolute;left:20px;top:-100px;background:var(--primary);color:white;padding:12px;z-index:100}.skip:focus{top:10px}[hidden]{display:none!important}@keyframes spin{to{transform:rotate(360deg)}}
+@media(min-width:1500px){body{font-size:15px}h1{font-size:32px}.metric-top{font-size:13px}.metric>span{font-size:11px}table{font-size:12px}.panel-heading p,.filter-foot{font-size:11px}}
+@media(max-width:1150px){.sidebar{width:210px;padding-inline:12px}.workspace{margin-left:210px}main{padding:26px 24px}.topbar{padding-inline:24px}.metrics{gap:12px}.metric{padding:16px}.analysis-grid{gap:16px}.login-panel{padding:17px}.login-panel form{flex:1}.login-panel input{max-width:none}.filters fieldset{gap:12px}th,td{padding-inline:17px}}
+@media(max-width:1050px){.sidebar{width:76px;padding:25px 10px}.brand{padding:0 8px 35px}.brand>span,.nav-label,.nav-link:not(.active),.sidebar-bottom{display:none}.nav-link{font-size:0;padding:15px;gap:0}.nav-link svg{width:20px;height:20px}.workspace{margin-left:76px}.brand img{width:40px}.metric strong{font-size:29px}.filters fieldset{grid-template-columns:1.3fr 1fr 1fr}.filters .button{grid-column:1/-1;justify-self:end}.filter-foot{margin-top:14px}}
+@media(max-width:850px){.analysis-grid{grid-template-columns:1fr}.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.metric-top{font-size:12px}.metric>span{font-size:10px}.daily-chart{min-height:215px}.login-panel form{width:100%}.login-panel input{flex:1;width:120px}.filter-foot{flex-wrap:wrap;gap:5px}.filters fieldset{grid-template-columns:1fr 1fr}.station-field{grid-column:1/-1}.filters .button{grid-column:auto;justify-self:stretch}.page-heading p{max-width:300px}}
+@media(max-width:560px){.sidebar{display:none}.workspace{margin:0}.topbar{height:62px;padding:0 18px}.breadcrumb{font-size:10px}.connection{font-size:9px;padding-right:8px}.top-actions{gap:8px}.avatar{width:29px;height:29px}main{padding:24px 16px 12px}.page-heading{align-items:flex-start;flex-wrap:wrap;gap:14px}h1{font-size:25px}.page-heading .button{width:100%}.metrics{gap:10px}.metric{padding:14px}.metric-top{font-size:10px;align-items:flex-start;min-height:35px}.metric-icon{width:27px;height:27px}.metric-icon svg{width:16px}.metric strong{font-size:28px;margin-top:5px}.metric>span{font-size:9px}.filters{padding:17px 16px 0}.filters fieldset{gap:13px}.filters .button{grid-column:1/-1}.filter-foot{font-size:9px}.login-panel{padding:17px 15px}.login-panel form{flex-wrap:wrap}.login-panel input{width:100%;flex:auto}.login-panel .button{width:100%}.panel-heading{padding:19px 16px 12px}.panel-heading h2{font-size:14px}.panel-heading p{font-size:9px}.panel-heading .small{font-size:0;width:38px;min-width:38px;padding:9px}.legend,.daily-chart{padding-inline:16px}.panel-note{margin-inline:16px}.tabs{padding-inline:16px}.pagination{padding-inline:16px}th,td{padding-inline:16px}footer{font-size:8px;flex-wrap:wrap}.dialog-heading h2{font-size:16px}.empty-state p{max-width:240px}.connection.connected{max-width:125px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}}
+.brand img{border-radius:50%;background:#fff;object-fit:contain;flex-shrink:0}.timing-section{border:1px solid var(--line);background:var(--surface);border-radius:var(--radius);padding:20px 22px;margin-bottom:22px}.timing-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:17px}.timing-heading p{font-size:11px;color:var(--muted);margin-top:3px}.timing-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.timing-item{display:grid;grid-template-columns:1fr auto;align-items:center;column-gap:8px;padding:15px 18px;border:1px solid var(--line);border-radius:10px}.timing-label{font-size:12px;font-weight:600;display:flex;align-items:center;gap:7px}.timing-label small{font-size:10px;font-weight:400}.timing-dot{height:6px;width:6px;border-radius:50%;background:currentColor;flex-shrink:0}.timing-item strong{grid-row:1/3;grid-column:2;font-size:26px;font-weight:600;font-variant-numeric:tabular-nums;line-height:1.4}.timing-unit{font-size:10px;color:var(--muted);margin:5px 0 0 13px}.timing-item.early{color:#946415;background:#fdf9f0;border-color:#eee2c7}.timing-item.ontime{color:var(--green);background:#f2f9f5;border-color:#d9e9df}.timing-item.late{color:var(--red);background:#fff5f5;border-color:#efd9dc}.timing-note{font-size:10px;color:var(--muted);margin-top:14px}.pill.early{color:#946415;background:var(--gold-bg)}
+@media(max-width:850px){.timing-grid{gap:10px}.timing-item{padding:13px;grid-template-columns:1fr}.timing-item strong{grid-row:auto;grid-column:1;order:2;margin-top:8px}.timing-unit{grid-column:1;margin:0;order:3}.timing-label{flex-wrap:wrap;font-size:11px;gap:5px}.timing-label small{width:100%;padding-left:11px}.timing-note{font-size:9px}}
+@media(max-width:560px){.timing-section{padding:18px 16px}.timing-heading h2{font-size:14px}.timing-heading p{font-size:10px}.timing-grid{gap:7px}.timing-item{padding:12px 9px}.timing-label{font-size:10px}.timing-label small{font-size:9px}.timing-item strong{font-size:24px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation:none!important;transition:none!important}}
+.page-nav{display:flex;gap:6px;margin:-6px 0 24px;border-bottom:1px solid var(--line);overflow:auto}.page-nav a{min-height:44px;display:flex;align-items:center;padding:10px 17px;border-bottom:3px solid transparent;white-space:nowrap;font-size:12px;color:var(--muted)}.page-nav a.active{border-bottom-color:var(--primary);color:var(--primary);font-weight:600}.filters fieldset{grid-template-columns:repeat(3,minmax(0,1fr))}.date-presets{grid-column:1/-1;display:flex;gap:8px;flex-wrap:wrap}.date-presets button{border:1px solid var(--line);border-radius:7px;background:var(--bg);padding:7px 16px;font-size:11px;color:var(--muted);min-height:44px}.date-presets button:last-child{margin-left:auto;color:var(--primary)}.chart-intro{display:flex;justify-content:space-between;gap:16px;align-items:center;margin:6px 0 22px}.chart-intro h2{font-size:19px}.chart-intro p{color:var(--muted);font-size:11px;margin-top:5px}.charts-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px}.charts-grid .panel{display:flex;flex-direction:column}.graph-body{padding:16px 22px;min-height:220px;max-height:440px;overflow:auto;flex:1}.graph-row{display:grid;grid-template-columns:minmax(90px,1fr) minmax(70px,1.3fr) auto;align-items:center;gap:12px;width:100%;border:0;background:transparent;min-height:44px;padding:7px 0;text-align:left;color:var(--text);font-size:11px}.graph-label{overflow-wrap:anywhere}.graph-track{height:18px;display:flex;background:#f2f0f5;border-radius:4px;overflow:hidden}.graph-segment{height:100%;flex-shrink:0}.graph-segment.patrolled{background:var(--green)}.graph-segment.idel{background:var(--red)}.graph-segment.early{background:var(--gold)}.graph-segment.unknown{background:#81788c}.graph-segment.purple-bar{background:var(--primary)}.graph-value{font-size:10px;font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap;color:var(--muted)}.graph-empty{min-height:180px;display:grid;place-content:center;text-align:center;color:var(--muted);font-size:12px}.chart-controls{display:flex;gap:12px;padding:4px 22px}.chart-controls label{flex:1;color:var(--muted);font-size:10px}.chart-controls select{margin-top:5px;font-size:11px}.chart-footnote{font-size:11px;color:var(--muted);margin-top:18px}.charts-grid .panel-note{margin-top:auto;font-size:10px}.station-graph .graph-row{grid-template-columns:minmax(110px,1.1fr) minmax(65px,1fr) auto}
+@media(max-width:1050px){.nav-link:not(.active){display:flex}.filters fieldset{grid-template-columns:repeat(2,minmax(0,1fr))}.filters .button{grid-column:auto;justify-self:stretch}.station-field{grid-column:auto}.charts-grid{gap:16px}.graph-row{gap:8px}.graph-body{padding-inline:16px}}
+@media(max-width:850px){.charts-grid{grid-template-columns:1fr}.chart-intro{align-items:flex-start;flex-direction:column}.graph-body{max-height:390px}.filters fieldset{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.page-nav{gap:0}.page-nav a{padding-inline:11px;font-size:11px}.filters fieldset{grid-template-columns:minmax(0,1fr)}.station-field,.filters .button{grid-column:auto}.date-presets{gap:6px}.date-presets button{padding-inline:12px}.chart-intro h2{font-size:17px}.graph-row{grid-template-columns:minmax(80px,1fr) minmax(60px,1fr) auto;font-size:10px}.graph-value{font-size:9px}.chart-controls{padding-inline:16px}.chart-footnote{font-size:10px}}
+
+.access-shell {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  width: min(100% - 48px, 900px);
+  margin: clamp(24px, 10vh, 108px) auto;
+  padding: 0;
+  background: var(--surface);
+  border: 1px solid #ded7e0;
+  border-radius: 16px;
+  overflow: hidden;
+}
+.access-identity, .access-form { padding: clamp(24px, 5vw, 56px); }
+.access-identity { background: var(--sidebar); color: #fff; }
+.access-identity img { display: block; border-radius: 50%; background: #fff; margin-bottom: 24px; }
+.access-identity h1 { font-size: clamp(29px, 4vw, 44px); letter-spacing: -.02em; }
+.access-identity p { color: #e6d7ea; font-size: 16px; margin-top: 15px; max-width: 28ch; }
+.access-form { align-self: center; }
+.access-form h2 { font-size: 22px; }
+.access-form > p { font-size: 16px; color: #595165; margin-top: 8px; }
+.access-form form, .access-action { margin-top: 24px; }
+.access-form label { font-size: 14px; margin-bottom: 6px; }
+.access-form input { font-size: 16px; min-height: 48px; }
+.access-form .primary { min-height: 48px; width: 100%; font-size: 15px; }
+.access-form form .primary { margin-top: 14px; }
+.access-form .login-error { font-size: 14px; margin-top: 8px; }
+.access-form .access-help, .access-form .access-status { font-size: 14px; margin-top: 16px; }
+.access-status:empty { display: none; }
+.account-link { display: inline-flex; align-items: center; min-height: 44px; margin-top: 8px; color: var(--primary); text-decoration: underline; text-underline-offset: 3px; }
+::selection { background: #ead6eb; color: #350d3e; }
+@media (max-width: 620px) {
+  .access-shell { grid-template-columns: 1fr; width: calc(100% - 28px); margin-block: 14px; }
+  .access-identity, .access-form { padding: 24px; }
+  .access-identity img { margin-bottom: 16px; }
+  .access-identity h1 br { display: none; }
+}
+</style></head>
+<body>
+<main id="loginPanel" class="access-shell" aria-labelledby="loginHeading">
+  <section class="access-identity">
+    <img src="https://subayb2.github.io/pea-guard-admin/assets/pea_logo.png" width="56" height="56" alt="การไฟฟ้าส่วนภูมิภาค">
+    <h1 id="loginHeading">แดชบอร์ด<br>การเดินตรวจ</h1>
+    <p>ติดตามผลรอบตรวจและประวัติการปฏิบัติงานของสถานีไฟฟ้า</p>
+  </section>
+  <section class="access-form">
+    <h2>เข้าสู่ระบบสำหรับผู้ดูแล</h2>
+    <p>Google ตรวจสอบบัญชีผู้ดูแลแล้ว กรอกรหัสผ่าน Dashboard เพื่อเปิดข้อมูล</p>
+    <form id="loginForm">
+      <label for="password">รหัสผ่าน Dashboard</label>
+      <input type="password" id="password" autocomplete="current-password" required maxlength="256" disabled aria-describedby="loginError">
+      <p id="loginError" class="login-error" role="alert" hidden></p>
+      <button class="button primary" id="loginSubmit" type="submit" disabled>เข้าสู่ระบบ</button>
+    </form>
+    <p id="accessStatus" class="access-status" role="status"></p>
+    <a class="account-link" href="https://accounts.google.com/AccountChooser?continue=https%3A%2F%2Fscript.google.com%2Fmacros%2Fs%2FAKfycbzJkQghDeRhNsRiI0NNUI3mKvZsqB0UJVz8bm4zs7cFVw9WK_8CpPa2qyZaKJKETABgsw%2Fexec" target="_top">เปลี่ยนบัญชี Google</a>
+  </section>
+</main>
+<div id="reportWorkspace" hidden>
+<a class="skip" href="#main">ข้ามไปเนื้อหา</a>
+<aside class="sidebar">
+  <a class="brand" href="#overview"><img src="https://subayb2.github.io/pea-guard-admin/assets/pea_logo.png" alt="ตราสัญลักษณ์การไฟฟ้าส่วนภูมิภาค" width="40" height="40"><span>Guard Tour<small>ADMIN WORKSPACE</small></span></a>
+  <div class="nav-label">การติดตาม</div>
+  <nav aria-label="เมนูหลัก"><a class="nav-link active" href="#overview" aria-current="page"><span data-icon="grid"></span>ภาพรวมการเดินตรวจ</a><a class="nav-link" href="#charts"><span data-icon="chart"></span>กราฟการเดินตรวจ</a><a class="nav-link" href="#details"><span data-icon="list"></span>ประวัติและรอบตรวจ</a></nav>
+  <div class="sidebar-bottom"><div class="system-label"><span class="status-dot"></span>ระบบเดินตรวจสถานีไฟฟ้า</div><p>การไฟฟ้าส่วนภูมิภาค</p><a id="patrolLink" target="_blank" rel="noopener">เปิดแอป รปภ.<span data-icon="external"></span></a></div>
+</aside>
+<div class="workspace">
+<header class="topbar"><div class="breadcrumb">Guard Tour <span>/</span> <strong id="breadcrumbPage">ภาพรวม</strong></div><div class="top-actions"><span id="connection" class="connection">ยังไม่เชื่อมต่อ</span><button id="logout" class="ghost" hidden>ออกจากระบบ</button><span class="avatar" aria-label="ผู้ดูแลระบบ">AD</span></div></header>
+<main id="main" tabindex="-1">
+  <section id="overview" class="page-heading"><div><h1 id="pageTitle">ภาพรวมการเดินตรวจ</h1><p>ติดตามการปฏิบัติงานและรอบที่ไม่มีการเดินตรวจ</p></div><button id="refresh" class="button secondary" disabled><span data-icon="refresh"></span>อัปเดตข้อมูล</button></section>
+  <nav class="page-nav" aria-label="เลือกหน้า Dashboard"><a href="#overview">ภาพรวม</a><a href="#charts">กราฟการเดินตรวจ</a><a href="#details">ประวัติและรอบตรวจ</a></nav>
+  <div id="message" class="message" role="status" aria-live="polite" hidden></div>
+  <form id="filterForm" class="filters"><fieldset id="filterFields" disabled><label><span>หน่วยงาน</span><select id="unitFilter"><option value="">ทุกหน่วยงาน</option></select></label><label class="station-field"><span>สถานีไฟฟ้า</span><select id="stationFilter"><option value="">ทุกสถานีไฟฟ้า</option></select></label><label><span>วันปฏิบัติงานเริ่มต้น</span><input id="startDate" type="date" required></label><label><span>ถึงวันที่</span><input id="endDate" type="date" required></label><label><span>รอบเวลา</span><select id="roundFilter"><option value="">ทุกรอบเวลา</option></select></label><button class="button primary" type="submit"><span data-icon="filter"></span>แสดงข้อมูล</button><div class="date-presets"><button type="button" data-days="1">วันนี้</button><button type="button" data-days="yesterday">เมื่อวาน</button><button type="button" data-days="7">7 วัน</button><button type="button" data-days="30">30 วัน</button><button id="resetFilters" type="button">ล้างตัวกรอง</button></div></fieldset><div class="filter-foot"><span><span data-icon="calendar"></span>วันปฏิบัติงานเริ่ม 06:00 น. · เลือกได้สูงสุด 31 วัน</span><span id="scope">ยังไม่ได้โหลดข้อมูล</span></div></form>
+  <div class="metrics" aria-label="สรุปตามตัวกรอง">
+    <article class="metric"><div class="metric-top">รายการเช็กอิน<span class="metric-icon purple" data-icon="pin"></span></div><strong id="kpiCheckins">—</strong><span>การบันทึกจุดตรวจสำเร็จ</span></article>
+    <article class="metric"><div class="metric-top">รอบที่มีการเดินตรวจ<span class="metric-icon green" data-icon="check"></span></div><strong id="kpiPatrolled">—</strong><span>มีอย่างน้อย 1 เช็กอินต่อสถานี / รอบ</span></article>
+    <article class="metric"><div class="metric-top">รอบที่ไม่มีการเดินตรวจ<span class="metric-icon red" data-icon="alert"></span></div><strong id="kpiIdel">—</strong><span>สถานะ IDEL · เฉพาะรอบที่ปิดแล้ว</span></article>
+    <article class="metric"><div class="metric-top">สัดส่วนรอบที่มีการตรวจ<span class="metric-icon gold" data-icon="chart"></span></div><strong id="kpiRate">—</strong><span id="kpiDenominator">เทียบกับรอบที่ปิดผลทั้งหมด</span></article>
+  </div>
+  <section id="timingSection" class="timing-section" aria-labelledby="timingTitle"><div class="timing-heading"><div><h2 id="timingTitle">เวลาบันทึกการเดินตรวจ</h2><p>นับรายเช็กอินตามสถานีและวันที่ที่เลือก</p></div><span class="subtle-tag">เวลาเซิร์ฟเวอร์</span></div><div class="timing-grid"><article class="timing-item early"><span class="timing-label"><span class="timing-dot"></span>Early <small>ก่อนเวลา</small></span><strong id="earlyCheckins">—</strong><span class="timing-unit">รายการ</span></article><article class="timing-item ontime"><span class="timing-label"><span class="timing-dot"></span>On Time <small>ตรงเวลา</small></span><strong id="onTimeCheckins">—</strong><span class="timing-unit">รายการ</span></article><article class="timing-item late"><span class="timing-label"><span class="timing-dot"></span>Late <small>หลังเวลา</small></span><strong id="lateCheckins">—</strong><span class="timing-unit">รายการ</span></article></div><p class="timing-note" id="timingNote">On Time = ก่อนหรือหลังเวลารอบไม่เกิน 15 นาที · Early / Late เป็นรายการที่บันทึกสำเร็จ ไม่ใช่ IDEL</p></section>
+  <div class="analysis-grid" id="overviewPanels">
+    <section class="panel trend"><div class="panel-heading"><div><h2>สถานะรอบตรวจรายวัน</h2><p>จำนวนรอบของสถานีในช่วงวันที่เลือก</p></div><span class="subtle-tag">รายวัน</span></div><div class="legend"><span><i class="dot green-bg"></i>มีการเดินตรวจ</span><span><i class="dot red-bg"></i>IDEL</span></div><div id="dailyChart" class="daily-chart"><div class="empty-state"><span data-icon="chart"></span><strong>ดูแนวโน้มการเดินตรวจที่นี่</strong><p>ข้อมูลจะแสดงหลังเข้าสู่ระบบ</p></div></div><div class="panel-note">มีการเดินตรวจ หมายถึงมีเช็กอินอย่างน้อย 1 จุด ไม่ได้หมายถึงเดินครบทุกจุด</div></section>
+    <section class="panel stations"><div class="panel-heading"><div><h2>สรุปตามสถานี</h2><p>เรียงตามจำนวนรอบ IDEL มากไปน้อย</p></div><span id="stationCount" class="count">— สถานี</span></div><div class="table-scroll"><table><caption class="sr-only">สรุปรอบเดินตรวจแยกตามสถานี</caption><thead><tr><th>สถานีไฟฟ้า</th><th class="num">มีการตรวจ</th><th class="num">IDEL</th></tr></thead><tbody id="stationRows"><tr><td colspan="3" class="empty-cell">เข้าสู่ระบบเพื่อดูสถานี</td></tr></tbody></table></div><div class="pagination"><span id="stationPage">—</span><div><button id="stationPrev" class="icon-button" aria-label="สถานีหน้าก่อนหน้า" disabled><span data-icon="left"></span></button><button id="stationNext" class="icon-button" aria-label="สถานีหน้าถัดไป" disabled><span data-icon="right"></span></button></div></div></section>
+  </div>
+  <section id="chartsPage" hidden aria-label="กราฟภาพรวมการเดินตรวจ">
+    <div class="chart-intro"><div><h2>มองภาพรวม ผ่านข้อมูลการเดินตรวจ</h2><p>ใช้ตัวกรองด้านบนร่วมกับทุกกราฟ · กดแท่งกราฟเพื่อเจาะดูวัน รอบเวลา หรือสถานี</p></div><span class="subtle-tag">ข้อมูลทั้งหมดในช่วงที่เลือก</span></div>
+    <div class="charts-grid">
+      <section class="panel"><div class="panel-heading"><div><h2>แนวโน้มผลรอบตรวจรายวัน</h2><p>จำนวนรอบที่ปิดผลแล้ว แยกตามวันปฏิบัติงาน</p></div></div><div class="legend"><span><i class="dot green-bg"></i>มีการตรวจ</span><span><i class="dot red-bg"></i>IDEL</span></div><div id="trendGraph" class="graph-body"></div><p class="panel-note">ตัวเลขท้ายแท่ง: มีการตรวจ / IDEL · กดเพื่อกรองวัน</p></section>
+      <section class="panel"><div class="panel-heading"><div><h2>การบันทึกตามเวลา</h2><p>Early / On Time / Late · นับรายเช็กอิน</p></div></div><div id="timingGraph" class="graph-body"></div><p class="panel-note">ร้อยละเทียบกับเช็กอินทั้งหมดในตัวกรอง รวมรายการที่ไม่ทราบสถานะเวลา</p></section>
+      <section class="panel"><div class="panel-heading"><div><h2>ผลตามรอบเวลา</h2><p>รวมแต่ละรอบของทุกวันในช่วงที่เลือก</p></div></div><div class="legend"><span><i class="dot green-bg"></i>มีการตรวจ</span><span><i class="dot red-bg"></i>IDEL</span></div><div id="roundGraph" class="graph-body"></div><p class="panel-note">แสดงรอบเวลาที่มีข้อมูลจริง รวมรอบในตารางเดิม · กดเพื่อกรองรอบ</p></section>
+      <section class="panel"><div class="panel-heading"><div><h2>เปรียบเทียบสถานีไฟฟ้า</h2><p>เรียงจำนวนมากไปน้อย · กดเพื่อดูสถานี</p></div></div><div class="chart-controls"><label for="stationMetric">เปรียบเทียบด้วย<select id="stationMetric"><option value="idelRounds">รอบ IDEL</option><option value="patrolledRounds">รอบที่มีการตรวจ</option><option value="checkins">รายการเช็กอิน</option></select></label><label for="stationLimit">จำนวนสถานี<select id="stationLimit"><option value="10">10 สถานี</option><option value="20">20 สถานี</option><option value="81">ทุกสถานี</option></select></label></div><div id="stationGraph" class="graph-body station-graph"></div><p class="panel-note">ใช้จำนวนจริง ไม่ได้ปรับตามจำนวนรอบที่แต่ละสถานีมีข้อมูล</p></section>
+    </div><p class="chart-footnote">มีการตรวจ = มีเช็กอินอย่างน้อย 1 จุดต่อสถานี / รอบ ไม่ได้หมายถึงครบ 5 จุด · IDEL นับเฉพาะรอบที่ปิดผลแล้ว · ช่วงที่ไม่มีข้อมูลไม่ถือเป็น IDEL</p>
+  </section>
+  <section class="panel details" id="details"><div class="panel-heading"><div><h2>รายละเอียดการปฏิบัติงาน</h2><p>ตรวจสอบผลรอบและรายการบันทึกตามตัวกรอง</p></div><button id="export" class="button secondary small" disabled><span data-icon="download"></span>ส่งออกหน้านี้</button></div><div class="tabs" role="tablist" aria-label="ประเภทข้อมูล"><button id="roundTab" class="tab active" role="tab" aria-selected="true" aria-controls="roundPanel">ผลรอบตรวจ<span id="roundCount">—</span></button><button id="logTab" class="tab" role="tab" aria-selected="false" aria-controls="logPanel" tabindex="-1">รายการเช็กอิน<span id="logCount">—</span></button></div><div id="roundPanel" role="tabpanel" aria-labelledby="roundTab"><div class="table-scroll"><table><caption class="sr-only">ผลรอบตรวจรายสถานี</caption><thead><tr><th>วันปฏิบัติงาน</th><th>รอบตรวจ</th><th>สถานีไฟฟ้า</th><th>สถานะ</th><th class="num">เช็กอิน</th></tr></thead><tbody id="roundRows"><tr><td colspan="5" class="empty-cell tall">ยังไม่มีข้อมูลที่โหลด · กรุณาเข้าสู่ระบบ</td></tr></tbody></table></div></div><div id="logPanel" role="tabpanel" aria-labelledby="logTab" hidden><div class="table-scroll"><table><caption class="sr-only">รายการบันทึกเดินตรวจ</caption><thead><tr><th>เวลาบันทึก</th><th>สถานีไฟฟ้า</th><th>รปภ.</th><th>จุดตรวจ</th><th>รอบ</th><th>เวลา</th><th class="num">ระยะจากจุด (ม.)</th></tr></thead><tbody id="logRows"><tr><td colspan="7" class="empty-cell tall">ยังไม่มีข้อมูลที่โหลด · กรุณาเข้าสู่ระบบ</td></tr></tbody></table></div></div><div class="pagination"><span id="recordPage">ครั้งละ 25 รายการ</span><div><button id="recordPrev" class="button secondary small" disabled>ก่อนหน้า</button><button id="recordNext" class="button secondary small" disabled>ถัดไป</button></div></div></section>
+  <footer><span>PEA · Guard Tour Admin</span><span id="asOf">อ่านข้อมูลเมื่อเชื่อมต่อและเข้าสู่ระบบ</span></footer>
+</main></div>
+</div>
+<script>
+// Public configuration only. Never put passwords, tokens, or Sheet data here.
+const config = Object.freeze({
+  backendUrl: 'https://script.google.com/macros/s/AKfycbzJkQghDeRhNsRiI0NNUI3mKvZsqB0UJVz8bm4zs7cFVw9WK_8CpPa2qyZaKJKETABgsw/exec',
+  patrolUrl: 'https://script.google.com/macros/s/AKfycbypqL6MePFB--u1dKG5AJaNeG_00I35KZ2t5QxJExhx16ccZCsFuE9tW115hX5rb6-W/exec',
+});
+
+class DashboardApi {
+  call(method, args = {}) {
+    return new Promise((resolve, reject) => {
+      if (typeof google === 'undefined' || !google.script?.run) {
+        reject(new Error('กรุณาเปิด Dashboard ผ่าน Google Apps Script'));
+        return;
+      }
+      const timer = setTimeout(() => {
+        reject(new Error('เซิร์ฟเวอร์ตอบช้า กรุณาตรวจอินเทอร์เน็ตแล้วลองอีกครั้ง'));
+      }, 45000);
+      google.script.run
+        .withSuccessHandler(result => {
+          clearTimeout(timer);
+          if (result == null) reject(new Error('เซิร์ฟเวอร์ยังไม่ส่งข้อมูล กรุณาลองอีกครั้ง'));
+          else resolve(result);
+        })
+        .withFailureHandler(error => {
+          clearTimeout(timer);
+          reject(new Error(error?.message || 'เชื่อมต่อไม่สำเร็จ กรุณาลองอีกครั้ง'));
+        })
+        .dashboardCall({method, args});
+    });
+  }
+}
+
+const $=id=>document.getElementById(id);
+const paths={grid:'M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z',list:'M9 5h12M9 12h12M9 19h12M3 5h1M3 12h1M3 19h1',external:'M14 3h7v7M21 3 10 14M10 3H3v18h18v-7',settings:'M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8ZM9 3l-1 3-3 1-2 3 2 2-1 3 3 3 3-1 2 2 3-1 1-3 3-1 2-3-2-2 1-3-3-3-3 1-2-2Z',refresh:'M20 7v5h-5M4 17v-5h5M5 8a8 8 0 0 1 13-2l2 3M4 15l2 3a8 8 0 0 0 13-2',lock:'M6 10h12v11H6zM8 10V6a4 4 0 0 1 8 0v4M12 14v3',arrow:'M4 12h16M14 6l6 6-6 6',filter:'M3 4h18l-7 8v7l-4 2v-9Z',calendar:'M3 6h18v15H3zM7 3v6M17 3v6M3 11h18',pin:'M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0ZM12 7a3 3 0 1 0 0 6 3 3 0 0 0 0-6Z',check:'m5 12 4 4L19 6',alert:'M12 3 2 21h20ZM12 9v5M12 17v1',chart:'M4 3v18h17M8 16v-4M13 16V8M18 16V5',left:'m15 5-7 7 7 7',right:'m9 5 7 7-7 7',download:'M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5',close:'m5 5 14 14M19 5 5 19'};
+function icons(root=document){root.querySelectorAll('[data-icon]').forEach(el=>{const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('viewBox','0 0 24 24');svg.setAttribute('fill','none');svg.setAttribute('stroke','currentColor');svg.setAttribute('stroke-width','1.6');svg.setAttribute('stroke-linecap','round');svg.setAttribute('stroke-linejoin','round');svg.setAttribute('aria-hidden','true');const path=document.createElementNS(svg.namespaceURI,'path');path.setAttribute('d',paths[el.dataset.icon]||paths.grid);svg.append(path);el.replaceChildren(svg);});}
+icons();
+const n=v=>new Intl.NumberFormat('th-TH').format(v);
+const dateLabel=v=>new Intl.DateTimeFormat('th-TH',{day:'numeric',month:'short',year:'numeric',timeZone:'Asia/Bangkok'}).format(new Date(v+'T00:00:00+07:00'));
+const dateTime=v=>v&&Number.isFinite(new Date(v).getTime())?new Intl.DateTimeFormat('th-TH',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit',timeZone:'Asia/Bangkok'}).format(new Date(v)):'—';
+const state={api:null,token:'',options:null,data:null,stationPage:1,tab:'round',busy:false,request:0};
+const directAccess = typeof google !== 'undefined' && Boolean(google.script?.run);
+let expiryTimer;
+$('patrolLink').href=config.patrolUrl;
+function notice(text='',error=false){$('message').textContent=text;$('message').hidden=!text;$('message').className='message'+(error?' error':state.busy?' busy':'');}
+function showError(id,text){$(id).textContent=text;$(id).hidden=!text;}
+function connection(){
+  const active=Boolean(state.token);
+  $('connection').textContent=active?'เชื่อมต่อข้อมูลแล้ว':'ยังไม่เข้าสู่ระบบ';
+  $('connection').className='connection'+(active?' connected':'');
+  $('reportWorkspace').hidden=!active;
+  $('loginPanel').hidden=active;
+  $('logout').hidden=!active;
+}
+function busy(value){
+  state.busy=value;
+  $('loginSubmit').disabled=value||!directAccess;
+  $('loginSubmit').textContent=value&&!state.token?'กำลังตรวจสอบ…':'เข้าสู่ระบบ';
+  $('password').disabled=value||!directAccess;
+  $('filterFields').disabled=value||!state.token;
+  $('refresh').disabled=value||!state.token;
+  $('export').disabled=value||!state.data;
+  $('logout').disabled=!state.token;
+  renderPagers();
+}
+function emptyRows(id,colspan,text){const row=document.createElement('tr'),td=document.createElement('td');td.colSpan=colspan;td.className='empty-cell';td.textContent=text;row.append(td);$(id).replaceChildren(row);}
+function clearData(){state.data=null;state.options=null;state.stationPage=1;for(const id of ['kpiCheckins','kpiPatrolled','kpiIdel','kpiRate','roundCount','logCount','earlyCheckins','onTimeCheckins','lateCheckins'])$(id).textContent='—';$('kpiDenominator').textContent='เทียบกับรอบที่ปิดผลทั้งหมด';$('timingNote').textContent='On Time = ก่อนหรือหลังเวลารอบไม่เกิน 15 นาที · Early / Late เป็นรายการที่บันทึกสำเร็จ ไม่ใช่ IDEL';$('scope').textContent='ยังไม่ได้โหลดข้อมูล';$('asOf').textContent='อ่านข้อมูลเมื่อเชื่อมต่อและเข้าสู่ระบบ';$('stationCount').textContent='— สถานี';$('stationFilter').replaceChildren(new Option('ทุกสถานีไฟฟ้า',''));emptyRows('stationRows',3,'เข้าสู่ระบบเพื่อดูสถานี');emptyRows('roundRows',5,'ยังไม่มีข้อมูลที่โหลด · กรุณาเข้าสู่ระบบ');emptyRows('logRows',7,'ยังไม่มีข้อมูลที่โหลด · กรุณาเข้าสู่ระบบ');$('dailyChart').replaceChildren();const el=document.createElement('div');el.className='empty-state';el.textContent='เข้าสู่ระบบเพื่อดูสถานะรอบตรวจ';$('dailyChart').append(el);clearGraphs();$('unitFilter').replaceChildren(new Option('ทุกหน่วยงาน',''));}
+function lock(text=''){
+  clearTimeout(expiryTimer);
+  state.request++;
+  state.token='';
+  clearData();
+  notice();
+  $('password').value='';
+  showError('loginError',text);
+  $('accessStatus').textContent='';
+  connection();
+  busy(false);
+}
+async function rpc(method,args={}){
+  if(!state.api)state.api=new DashboardApi();
+  return state.api.call(method,{...args,adminSessionToken:state.token});
+}
+function filters(){const start=$('startDate').value,end=$('endDate').value;const days=(Date.parse(end)-Date.parse(start))/86400000+1;if(!start||!end||!Number.isFinite(days)||days<1||days>31)throw new Error('เลือกช่วงวันปฏิบัติงานตั้งแต่ 1 ถึง 31 วัน');return{startDate:start,endDate:end,unit:$('unitFilter').value,round:$('roundFilter').value,stationCode:$('stationFilter').value,roundPage:1,logPage:1};}
+async function load(input,forceRefresh=false){if(state.busy)return;let f;try{f=input||filters();}catch(e){notice(e.message,true);return;}const request=++state.request;busy(true);notice('กำลังอ่านข้อมูลตามตัวกรอง…');try{const d=await rpc('getAdminDashboard',{...f,forceRefresh});if(request!==state.request)return;if(!d?.summary||!Array.isArray(d.daily)||!d.logs||!d.rounds)throw new Error('ข้อมูลจาก API ไม่ครบ กรุณาตรวจเวอร์ชัน API');state.data=d;state.stationPage=1;render();notice(d.monitoringEnabled===false?'ยังไม่ได้เปิดการตรวจ IDEL อัตโนมัติในระบบเดินตรวจ':'',d.monitoringEnabled===false);}catch(e){if(request!==state.request)return;if(/ADMIN_SESSION_REQUIRED|เฉพาะ Admin/.test(e.message)){lock(e.message.replace('ADMIN_SESSION_REQUIRED: ',''));}else notice(e.message+(state.data?' · ยังคงแสดงผลที่โหลดสำเร็จครั้งก่อน':''),true);}finally{if(request===state.request)busy(false);}}
+function cell(row,value,cls=''){const td=document.createElement('td');td.textContent=value;td.className=cls;row.append(td);return td;}
+function pill(text,cls=''){const el=document.createElement('span');el.className='pill '+cls;el.textContent=text;return el;}
+function render(){const d=state.data,s=d.summary,f=d.filters;for(const key of ['earlyCheckins','onTimeCheckins','lateCheckins'])$(key).textContent=Number.isFinite(s[key])?n(s[key]):'—';$('timingNote').textContent='On Time = ก่อนหรือหลังเวลารอบไม่เกิน 15 นาที · Early / Late เป็นรายการที่บันทึกสำเร็จ ไม่ใช่ IDEL'+(s.unknownTimeCheckins?' · ไม่ทราบสถานะเวลา '+n(s.unknownTimeCheckins)+' รายการ':'');$('kpiCheckins').textContent=n(s.checkins);$('kpiPatrolled').textContent=n(s.patrolledRounds);$('kpiIdel').textContent=n(s.idelRounds);$('kpiRate').textContent=s.closedRounds?n(s.patrolledRounds/s.closedRounds*100)+'%':'—';$('kpiDenominator').textContent=s.closedRounds?'จาก '+n(s.closedRounds)+' รอบที่ปิดผลแล้ว':'ยังไม่มีรอบที่ปิดผล';$('roundCount').textContent=n(d.rounds.total);$('logCount').textContent=n(d.logs.total);const station=state.options.stations.find(x=>x.code===f.stationCode);$('scope').textContent=(station?station.name:n(s.stationCount)+' สถานี')+(f.unit?' · '+f.unit:'')+(f.round?' · รอบ '+f.round:'')+' · '+dateLabel(f.startDate)+(f.startDate!==f.endDate?' – '+dateLabel(f.endDate):'');$('asOf').textContent='ข้อมูล ณ '+dateTime(d.asOf);renderChart();renderStations();renderRecords();renderGraphs();}
+function renderChart(){const d=state.data;$('dailyChart').replaceChildren();if(!d.summary.closedRounds){const el=document.createElement('div');el.className='empty-state';el.textContent='ไม่พบรอบที่ปิดผลแล้วในช่วงวันที่เลือก';$('dailyChart').append(el);return;}const max=Math.max(1,...d.daily.map(x=>x.patrolled+x.idel));for(const item of d.daily){const row=document.createElement('button');row.className='bar-row';row.setAttribute('aria-label',dateLabel(item.date)+' มีการตรวจ '+n(item.patrolled)+' รอบ IDEL '+n(item.idel)+' รอบ กดเพื่อดูวันนั้น');row.title=row.getAttribute('aria-label');const label=document.createElement('span');label.textContent=new Intl.DateTimeFormat('th-TH',{day:'numeric',month:'short',timeZone:'Asia/Bangkok'}).format(new Date(item.date+'T00:00:00+07:00'));const track=document.createElement('span');track.className='bar-track';for(const [key,cls] of [['patrolled',''],['idel','idel']]){const bar=document.createElement('span');bar.className='bar '+cls;bar.style.width=(item[key]/max*100)+'%';track.append(bar);}const values=document.createElement('span');values.className='bar-values';values.textContent=n(item.patrolled)+' / '+n(item.idel);row.append(label,track,values);row.onclick=()=>{if(state.busy)return;$('startDate').value=item.date;$('endDate').value=item.date;load();};$('dailyChart').append(row);}}
+function renderStations(){const items=state.data.stations,pages=Math.max(1,Math.ceil(items.length/8));state.stationPage=Math.min(state.stationPage,pages);$('stationRows').replaceChildren();for(const s of items.slice((state.stationPage-1)*8,state.stationPage*8)){const row=document.createElement('tr'),td=cell(row,'');const button=document.createElement('button');button.className='station-button';button.textContent=s.name;button.onclick=()=>{if(state.busy)return;$('stationFilter').value=s.code;load();};const code=document.createElement('span');code.className='station-code';code.textContent=s.code;td.append(button,code);cell(row,n(s.patrolledRounds),'num');cell(row,n(s.idelRounds),'num');$('stationRows').append(row);}if(!items.length)emptyRows('stationRows',3,'ไม่พบสถานีตามตัวกรอง');$('stationCount').textContent=n(items.length)+' สถานี';renderPagers();}
+function renderRecords(){const d=state.data;$('roundRows').replaceChildren();for(const r of d.rounds.items){const row=document.createElement('tr');cell(row,dateLabel(r.patrolDate));cell(row,dateTime(r.scheduledAt));cell(row,r.stationName);cell(row,'').append(pill(r.status==='IDEL'?'IDEL · ไม่มีการตรวจ':'มีการเดินตรวจ',r.status==='IDEL'?'idel':''));cell(row,n(r.checkinCount),'num');$('roundRows').append(row);}if(!d.rounds.items.length)emptyRows('roundRows',5,'ไม่พบผลปิดรอบตามตัวกรอง');$('logRows').replaceChildren();for(const r of d.logs.items){const row=document.createElement('tr');cell(row,dateTime(r.receivedAt));cell(row,r.stationName);cell(row,r.guardName);cell(row,r.checkpointId.replace(/^CP/,'จุดที่ '));cell(row,r.round+' น.');cell(row,'').append(pill(({'On Time':'On Time · ตรงเวลา',Early:'Early · ก่อนเวลา',Late:'Late · หลังเวลา'})[r.status]||r.status,r.status==='Late'?'late':r.status==='Early'?'early':''));cell(row,Number.isFinite(r.checkpointDistanceMeters)?r.checkpointDistanceMeters.toFixed(1):'—','num');$('logRows').append(row);}if(!d.logs.items.length)emptyRows('logRows',7,'ไม่พบรายการเช็กอินตามตัวกรอง');renderPagers();}
+function renderPagers(){const d=state.data;const total=d?.stations.length||0,pages=Math.max(1,Math.ceil(total/8));$('stationPage').textContent=d?'หน้า '+state.stationPage+' / '+pages:'—';$('stationPrev').disabled=!d||state.busy||state.stationPage<=1;$('stationNext').disabled=!d||state.busy||state.stationPage>=pages;const records=d?.[state.tab==='round'?'rounds':'logs'];$('recordPage').textContent=records?n(records.total)+' รายการ · หน้า '+records.page+' / '+records.pages:'ครั้งละ 25 รายการ';$('recordPrev').disabled=!records||state.busy||records.page<=1;$('recordNext').disabled=!records||state.busy||records.page>=records.pages;}
+function tab(name,focus=false){state.tab=name;for(const key of ['round','log']){$(key+'Panel').hidden=key!==name;$(key+'Tab').setAttribute('aria-selected',String(key===name));$(key+'Tab').tabIndex=key===name?0:-1;$(key+'Tab').className='tab'+(key===name?' active':'');}if(focus)$(name+'Tab').focus();renderPagers();}
+for(const key of ['round','log']){$(key+'Tab').onclick=()=>tab(key);$(key+'Tab').onkeydown=e=>{if(['ArrowLeft','ArrowRight','Home','End'].includes(e.key)){e.preventDefault();tab(e.key==='Home'?'round':e.key==='End'?'log':key==='round'?'log':'round',true);}};}
+$('filterForm').onsubmit=e=>{e.preventDefault();load();};$('filterForm').onchange=()=>{if(state.data)notice('ตัวกรองเปลี่ยนแล้ว กด “แสดงข้อมูล” เพื่ออัปเดตผล');};$('refresh').onclick=()=>load(undefined,true);
+$('stationPrev').onclick=()=>{state.stationPage--;renderStations();};$('stationNext').onclick=()=>{state.stationPage++;renderStations();};for(const [id,delta] of [['recordPrev',-1],['recordNext',1]])$(id).onclick=()=>{const key=state.tab==='round'?'round':'log',data=state.data[key==='round'?'rounds':'logs'];load({...state.data.filters,[key+'Page']:data.page+delta});};
+$('loginForm').onsubmit=async event=>{
+  event.preventDefault();
+  if(!directAccess||state.busy)return;
+  const password=$('password').value;
+  $('password').value='';
+  busy(true);
+  showError('loginError','');
+  $('accessStatus').textContent='กำลังตรวจสอบสิทธิ์ผู้ดูแล';
+  try{
+    const result=await rpc('loginAdmin',{password});
+    state.token=result.adminSessionToken;
+    state.options=await rpc('getAdminOptions');
+    initializeFilters();
+    $('startDate').value=state.options.today;
+    $('endDate').value=state.options.today;
+    expiryTimer=setTimeout(()=>lock('หมดเวลาเข้าใช้งาน กรุณาเข้าสู่ระบบอีกครั้ง'),Math.max(0,result.expiresAt-Date.now()));
+    $('accessStatus').textContent='';
+    connection();
+    busy(false);
+    await load();
+  }catch(error){
+    lock(error.message.replace(/^ADMIN_SESSION_REQUIRED: /,''));
+    $('password').focus();
+  }
+};
+$('logout').onclick=async()=>{
+  const token=state.token;
+  if(!token)return;
+  lock();
+  $('accessStatus').textContent='ออกจากระบบแล้ว';
+  try{await state.api.call('logoutAdmin',{adminSessionToken:token});}
+  catch{if(!state.token&&!state.busy)$('accessStatus').textContent='ปิดข้อมูลบนหน้านี้แล้ว เซสชันบนเซิร์ฟเวอร์จะหมดอายุตามเวลา';}
+};
+
+
+
+function csvCell(value){const text=String(value??'');return '"'+(/^[=+@\-\t\r]/.test(text)?"'"+text:text).replaceAll('"','""')+'"';}
+$('export').onclick=()=>{if(!state.data)return;const rounds=state.tab==='round',items=state.data[rounds?'rounds':'logs'].items;const headers=rounds?['วันปฏิบัติงาน','รอบตรวจ','สถานี','สถานะ','เช็กอิน']:['เวลาบันทึก','สถานี','รปภ.','จุดตรวจ','รอบ','เวลา','ระยะห่างเมตร'];const rows=items.map(r=>rounds?[r.patrolDate,dateTime(r.scheduledAt),r.stationName,r.status,r.checkinCount]:[r.receivedAt,r.stationName,r.guardName,r.checkpointId,r.round,r.status,r.checkpointDistanceMeters]);const blob=new Blob(['\uFEFF'+[headers,...rows].map(r=>r.map(csvCell).join(',')).join('\r\n')],{type:'text/csv;charset=utf-8'});const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='guard-tour-'+(rounds?'rounds':'checkins')+'-page-'+state.data[rounds?'rounds':'logs'].page+'.csv';a.click();URL.revokeObjectURL(url);};
+const graphIds=['trendGraph','timingGraph','roundGraph','stationGraph'];
+function clearGraphs(){for(const id of graphIds){const p=document.createElement('p');p.className='graph-empty';p.textContent='เข้าสู่ระบบเพื่อดูกราฟจากข้อมูลจริง';$(id).replaceChildren(p);}}
+function initializeFilters(){
+  const units=[...new Set(state.options.stations.map(s=>s.unit).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'th'));
+  $('unitFilter').replaceChildren(new Option('ทุกหน่วยงาน',''),...units.map(x=>new Option(x,x)));
+  const hours=[7,10,14,17,19,21,23,1,2,3,4,5];
+  $('roundFilter').replaceChildren(new Option('ทุกรอบเวลา',''),...Array.from({length:24},(_,i)=>(i+6)%24).map(h=>{const value=String(h).padStart(2,'0')+':00';return new Option(value+(hours.includes(h)?'':' (ตารางเดิม)'),value);}));
+  $('roundFilter').value='';updateStations();
+}
+function updateStations(){const previous=$('stationFilter').value;const list=(state.options?.stations||[]).filter(s=>!$('unitFilter').value||s.unit===$('unitFilter').value).sort((a,b)=>a.name.localeCompare(b.name,'th'));$('stationFilter').replaceChildren(new Option('ทุกสถานีไฟฟ้า',''),...list.map(s=>new Option(s.name+' ('+s.code+')',s.code)));$('stationFilter').value=list.some(s=>s.code===previous)?previous:'';}
+$('unitFilter').onchange=updateStations;
+function setPreset(days){if(state.busy||!state.options)return;const today=state.options.today;const offset=days==='yesterday'?1:0;const end=new Date(today+'T12:00:00+07:00');end.setUTCDate(end.getUTCDate()-offset);const start=new Date(end);start.setUTCDate(start.getUTCDate()-(offset?0:Number(days)-1));$('startDate').value=start.toISOString().slice(0,10);$('endDate').value=end.toISOString().slice(0,10);load();}
+document.querySelectorAll('[data-days]').forEach(el=>el.onclick=()=>setPreset(el.dataset.days));
+$('resetFilters').onclick=()=>{if(state.busy||!state.options)return;$('unitFilter').value='';updateStations();$('stationFilter').value='';$('roundFilter').value='';setPreset('1');};
+function changeScope(values){if(state.busy)return;for(const [id,value] of Object.entries(values))$(id).value=value;load();}
+function graphBars(id,items,series,onPick,emptyText='ไม่พบข้อมูลตามตัวกรองที่เลือก'){
+  const root=$(id);root.replaceChildren();
+  if(!items.length||!items.some(x=>series.some(s=>Number(x[s.key])>0))){const p=document.createElement('p');p.className='graph-empty';p.textContent=emptyText;root.append(p);return;}
+  const max=Math.max(1,...items.map(x=>series.reduce((sum,s)=>sum+(Number(x[s.key])||0),0)));
+  for(const item of items){const row=document.createElement(onPick?'button':'div');if(onPick){row.type='button';row.onclick=()=>onPick(item);}row.className='graph-row';
+    const label=document.createElement('span');label.className='graph-label';label.textContent=item.label;
+    const track=document.createElement('span');track.className='graph-track';
+    for(const s of series){const bar=document.createElement('span');bar.className='graph-segment '+s.cls;bar.style.width=((Number(item[s.key])||0)/max*100)+'%';track.append(bar);}
+    const value=document.createElement('span');value.className='graph-value';value.textContent=series.map(s=>n(Number(item[s.key])||0)).join(' / ')+(item.suffix||'');
+    const description=item.label+' · '+series.map(s=>s.label+' '+n(Number(item[s.key])||0)).join(' · ')+(item.suffix||'');row.title=description;row.setAttribute('aria-label',description);row.append(label,track,value);root.append(row);
+  }
+}
+function renderGraphs(){
+  if(!state.data){clearGraphs();return;}
+  const d=state.data,series=[{key:'patrolled',label:'มีการตรวจ',cls:'patrolled'},{key:'idel',label:'IDEL',cls:'idel'}];
+  graphBars('trendGraph',d.daily.map(x=>({...x,label:dateLabel(x.date)})),series,x=>changeScope({startDate:x.date,endDate:x.date}));
+  const timing=[['earlyCheckins','Early · ก่อนเวลา','early'],['onTimeCheckins','On Time · ตรงเวลา','patrolled'],['lateCheckins','Late · หลังเวลา','idel'],['unknownTimeCheckins','ไม่ทราบสถานะ','unknown']].filter(([key])=>key!=='unknownTimeCheckins'||d.summary[key]>0);
+  graphBars('timingGraph',timing.map(([key,label,cls])=>({label,value:d.summary[key]||0,suffix:' · '+(d.summary.checkins?((d.summary[key]||0)/d.summary.checkins*100).toFixed(1):'0')+'%',cls})),[{key:'value',label:'รายการ',cls:'timing'}]);
+  for(let i=0;i<$('timingGraph').children.length;i++){const segment=$('timingGraph').children[i].querySelector?.('.graph-segment');if(segment)segment.className='graph-segment '+timing[i][2];}
+  if(Array.isArray(d.roundsByHour))graphBars('roundGraph',d.roundsByHour.filter(x=>x.patrolled+x.idel>0).map(x=>({...x,label:x.round+' น.'})),series,x=>changeScope({roundFilter:x.round}),'ยังไม่มีผลรอบที่ปิดแล้วตามตัวกรองนี้');
+  else{const p=document.createElement('p');p.className='graph-empty';p.textContent='กราฟรอบเวลาต้องใช้ Admin API รุ่นกราฟ (อัปเดต Code.gs และ deployment)';$('roundGraph').replaceChildren(p);}
+  const metric=$('stationMetric').value||'idelRounds',limit=Number($('stationLimit').value)||10;
+  const label={idelRounds:'IDEL',patrolledRounds:'มีการตรวจ',checkins:'เช็กอิน'}[metric];
+  const items=[...d.stations].sort((a,b)=>(b[metric]||0)-(a[metric]||0)||a.name.localeCompare(b.name,'th')).slice(0,limit).map(x=>({...x,label:x.name,value:x[metric]||0}));
+  graphBars('stationGraph',items,[{key:'value',label,cls:metric==='idelRounds'?'idel':metric==='checkins'?'purple-bar':'patrolled'}],x=>changeScope({stationFilter:x.code}));
+}
+$('stationMetric').onchange=renderGraphs;$('stationLimit').onchange=renderGraphs;
+function showPage(name='overview'){const titles={overview:'ภาพรวมการเดินตรวจ',charts:'กราฟการเดินตรวจ',details:'ประวัติและรอบตรวจ'};$('pageTitle').textContent=titles[name];$('breadcrumbPage').textContent=titles[name];$('overviewPanels').hidden=name!=='overview';$('chartsPage').hidden=name!=='charts';$('details').hidden=name!=='details';$('timingSection').hidden=name==='charts';document.querySelectorAll('.nav-link,.page-nav a').forEach(a=>{const active=a.getAttribute('href')==='#'+name;a.classList.toggle('active',active);if(active)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');});}
+document.querySelectorAll('.nav-link,.page-nav a,.brand').forEach(link=>{
+  link.addEventListener('click',event=>{
+    event.preventDefault();
+    showPage(link.getAttribute('href').slice(1));
+  });
+});
+clearGraphs();showPage();connection();busy(false);
+
+if(!directAccess)showError('loginError','กรุณาเปิด Dashboard ผ่าน Google Apps Script');
+
+</script></body></html>
