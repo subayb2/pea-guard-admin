@@ -1,5 +1,5 @@
 import {config} from '../config.js';
-import {DashboardApi,validateBackendUrl} from './api.js';
+import {DashboardApi} from './api.js';
 const $=id=>document.getElementById(id);
 const paths={grid:'M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z',list:'M9 5h12M9 12h12M9 19h12M3 5h1M3 12h1M3 19h1',external:'M14 3h7v7M21 3 10 14M10 3H3v18h18v-7',settings:'M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8ZM9 3l-1 3-3 1-2 3 2 2-1 3 3 3 3-1 2 2 3-1 1-3 3-1 2-3-2-2 1-3-3-3-3 1-2-2Z',refresh:'M20 7v5h-5M4 17v-5h5M5 8a8 8 0 0 1 13-2l2 3M4 15l2 3a8 8 0 0 0 13-2',lock:'M6 10h12v11H6zM8 10V6a4 4 0 0 1 8 0v4M12 14v3',arrow:'M4 12h16M14 6l6 6-6 6',filter:'M3 4h18l-7 8v7l-4 2v-9Z',calendar:'M3 6h18v15H3zM7 3v6M17 3v6M3 11h18',pin:'M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0ZM12 7a3 3 0 1 0 0 6 3 3 0 0 0 0-6Z',check:'m5 12 4 4L19 6',alert:'M12 3 2 21h20ZM12 9v5M12 17v1',chart:'M4 3v18h17M8 16v-4M13 16V8M18 16V5',left:'m15 5-7 7 7 7',right:'m9 5 7 7-7 7',download:'M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5',close:'m5 5 14 14M19 5 5 19'};
 function icons(root=document){root.querySelectorAll('[data-icon]').forEach(el=>{const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('viewBox','0 0 24 24');svg.setAttribute('fill','none');svg.setAttribute('stroke','currentColor');svg.setAttribute('stroke-width','1.6');svg.setAttribute('stroke-linecap','round');svg.setAttribute('stroke-linejoin','round');svg.setAttribute('aria-hidden','true');const path=document.createElementNS(svg.namespaceURI,'path');path.setAttribute('d',paths[el.dataset.icon]||paths.grid);svg.append(path);el.replaceChildren(svg);});}
@@ -8,18 +8,50 @@ const n=v=>new Intl.NumberFormat('th-TH').format(v);
 const dateLabel=v=>new Intl.DateTimeFormat('th-TH',{day:'numeric',month:'short',year:'numeric',timeZone:'Asia/Bangkok'}).format(new Date(v+'T00:00:00+07:00'));
 const dateTime=v=>v&&Number.isFinite(new Date(v).getTime())?new Intl.DateTimeFormat('th-TH',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit',timeZone:'Asia/Bangkok'}).format(new Date(v)):'—';
 const state={api:null,token:'',options:null,data:null,stationPage:1,tab:'round',busy:false,request:0};
-let backendUrl=config.backendUrl;try{backendUrl=localStorage.getItem('pea.admin.backend')||backendUrl;}catch{}
-$('patrolLink').href=config.patrolUrl;$('originLabel').textContent=location.origin;
+const directAccess = typeof google !== 'undefined' && Boolean(google.script?.run);
+let expiryTimer;
+$('patrolLink').href=config.patrolUrl;
 function notice(text='',error=false){$('message').textContent=text;$('message').hidden=!text;$('message').className='message'+(error?' error':state.busy?' busy':'');}
 function showError(id,text){$(id).textContent=text;$(id).hidden=!text;}
-function connection(){const active=!!state.token;$('connection').textContent=active?'เชื่อมต่อข้อมูลแล้ว':backendUrl?'API พร้อมเชื่อมต่อ':'ยังไม่เชื่อมต่อ';$('connection').className='connection'+(active?' connected':'');$('loginHint').textContent=backendUrl?'ใช้บัญชี Google Admin ที่ได้รับอนุญาต และรหัสผ่านเดิม':'เชื่อมต่อ API เพื่ออ่านข้อมูลจาก Google Sheets';$('backendLink').hidden=!backendUrl;if(backendUrl)$('backendLink').href=backendUrl;$('loginSubmit').textContent=backendUrl?'เข้าสู่ระบบ':'ตั้งค่าการเชื่อมต่อ';$('password').disabled=!backendUrl;}
-function busy(value){state.busy=value;$('loginSubmit').disabled=value;$('password').disabled=value||!backendUrl;$('filterFields').disabled=value||!state.token;$('refresh').disabled=value||!state.token;$('export').disabled=value||!state.data;$('logout').disabled=value;$('settings').disabled=value;renderPagers();}
+function connection(){
+  const active=Boolean(state.token);
+  $('connection').textContent=active?'เชื่อมต่อข้อมูลแล้ว':'ยังไม่เข้าสู่ระบบ';
+  $('connection').className='connection'+(active?' connected':'');
+  $('reportWorkspace').hidden=!active;
+  $('loginPanel').hidden=active;
+  $('logout').hidden=!active;
+}
+function busy(value){
+  state.busy=value;
+  $('loginSubmit').disabled=value||!directAccess;
+  $('loginSubmit').textContent=value&&!state.token?'กำลังตรวจสอบ…':'เข้าสู่ระบบ';
+  $('password').disabled=value||!directAccess;
+  $('filterFields').disabled=value||!state.token;
+  $('refresh').disabled=value||!state.token;
+  $('export').disabled=value||!state.data;
+  $('logout').disabled=!state.token;
+  renderPagers();
+}
 function emptyRows(id,colspan,text){const row=document.createElement('tr'),td=document.createElement('td');td.colSpan=colspan;td.className='empty-cell';td.textContent=text;row.append(td);$(id).replaceChildren(row);}
 function clearData(){state.data=null;state.options=null;state.stationPage=1;for(const id of ['kpiCheckins','kpiPatrolled','kpiIdel','kpiRate','roundCount','logCount','earlyCheckins','onTimeCheckins','lateCheckins'])$(id).textContent='—';$('kpiDenominator').textContent='เทียบกับรอบที่ปิดผลทั้งหมด';$('timingNote').textContent='On Time = ก่อนหรือหลังเวลารอบไม่เกิน 15 นาที · Early / Late เป็นรายการที่บันทึกสำเร็จ ไม่ใช่ IDEL';$('scope').textContent='ยังไม่ได้โหลดข้อมูล';$('asOf').textContent='อ่านข้อมูลเมื่อเชื่อมต่อและเข้าสู่ระบบ';$('stationCount').textContent='— สถานี';$('stationFilter').replaceChildren(new Option('ทุกสถานีไฟฟ้า',''));emptyRows('stationRows',3,'เข้าสู่ระบบเพื่อดูสถานี');emptyRows('roundRows',5,'ยังไม่มีข้อมูลที่โหลด · กรุณาเข้าสู่ระบบ');emptyRows('logRows',7,'ยังไม่มีข้อมูลที่โหลด · กรุณาเข้าสู่ระบบ');$('dailyChart').replaceChildren();const el=document.createElement('div');el.className='empty-state';el.textContent='เข้าสู่ระบบเพื่อดูสถานะรอบตรวจ';$('dailyChart').append(el);clearGraphs();$('unitFilter').replaceChildren(new Option('ทุกหน่วยงาน',''));}
-function lock(text=''){state.token='';clearData();$('loginPanel').hidden=false;$('logout').hidden=true;$('password').value='';showError('loginError',text);connection();busy(false);}
-async function rpc(method,args={}){if(!state.api)state.api=new DashboardApi(backendUrl);return state.api.call(method,{...args,adminSessionToken:state.token});}
+function lock(text=''){
+  clearTimeout(expiryTimer);
+  state.request++;
+  state.token='';
+  clearData();
+  notice();
+  $('password').value='';
+  showError('loginError',text);
+  $('accessStatus').textContent='';
+  connection();
+  busy(false);
+}
+async function rpc(method,args={}){
+  if(!state.api)state.api=new DashboardApi();
+  return state.api.call(method,{...args,adminSessionToken:state.token});
+}
 function filters(){const start=$('startDate').value,end=$('endDate').value;const days=(Date.parse(end)-Date.parse(start))/86400000+1;if(!start||!end||!Number.isFinite(days)||days<1||days>31)throw new Error('เลือกช่วงวันปฏิบัติงานตั้งแต่ 1 ถึง 31 วัน');return{startDate:start,endDate:end,unit:$('unitFilter').value,round:$('roundFilter').value,stationCode:$('stationFilter').value,roundPage:1,logPage:1};}
-async function load(input,forceRefresh=false){if(state.busy)return;let f;try{f=input||filters();}catch(e){notice(e.message,true);return;}const request=++state.request;busy(true);notice('กำลังอ่านข้อมูลตามตัวกรอง…');try{const d=await rpc('getAdminDashboard',{...f,forceRefresh});if(request!==state.request)return;if(!d?.summary||!Array.isArray(d.daily)||!d.logs||!d.rounds)throw new Error('ข้อมูลจาก API ไม่ครบ กรุณาตรวจเวอร์ชัน API');state.data=d;state.stationPage=1;render();notice(d.monitoringEnabled===false?'ยังไม่ได้เปิดการตรวจ IDEL อัตโนมัติในระบบเดินตรวจ':'',d.monitoringEnabled===false);}catch(e){if(/ADMIN_SESSION_REQUIRED|เฉพาะ Admin/.test(e.message)){lock(e.message.replace('ADMIN_SESSION_REQUIRED: ',''));}else notice(e.message+(state.data?' · ยังคงแสดงผลที่โหลดสำเร็จครั้งก่อน':''),true);}finally{busy(false);}}
+async function load(input,forceRefresh=false){if(state.busy)return;let f;try{f=input||filters();}catch(e){notice(e.message,true);return;}const request=++state.request;busy(true);notice('กำลังอ่านข้อมูลตามตัวกรอง…');try{const d=await rpc('getAdminDashboard',{...f,forceRefresh});if(request!==state.request)return;if(!d?.summary||!Array.isArray(d.daily)||!d.logs||!d.rounds)throw new Error('ข้อมูลจาก API ไม่ครบ กรุณาตรวจเวอร์ชัน API');state.data=d;state.stationPage=1;render();notice(d.monitoringEnabled===false?'ยังไม่ได้เปิดการตรวจ IDEL อัตโนมัติในระบบเดินตรวจ':'',d.monitoringEnabled===false);}catch(e){if(request!==state.request)return;if(/ADMIN_SESSION_REQUIRED|เฉพาะ Admin/.test(e.message)){lock(e.message.replace('ADMIN_SESSION_REQUIRED: ',''));}else notice(e.message+(state.data?' · ยังคงแสดงผลที่โหลดสำเร็จครั้งก่อน':''),true);}finally{if(request===state.request)busy(false);}}
 function cell(row,value,cls=''){const td=document.createElement('td');td.textContent=value;td.className=cls;row.append(td);return td;}
 function pill(text,cls=''){const el=document.createElement('span');el.className='pill '+cls;el.textContent=text;return el;}
 function render(){const d=state.data,s=d.summary,f=d.filters;for(const key of ['earlyCheckins','onTimeCheckins','lateCheckins'])$(key).textContent=Number.isFinite(s[key])?n(s[key]):'—';$('timingNote').textContent='On Time = ก่อนหรือหลังเวลารอบไม่เกิน 15 นาที · Early / Late เป็นรายการที่บันทึกสำเร็จ ไม่ใช่ IDEL'+(s.unknownTimeCheckins?' · ไม่ทราบสถานะเวลา '+n(s.unknownTimeCheckins)+' รายการ':'');$('kpiCheckins').textContent=n(s.checkins);$('kpiPatrolled').textContent=n(s.patrolledRounds);$('kpiIdel').textContent=n(s.idelRounds);$('kpiRate').textContent=s.closedRounds?n(s.patrolledRounds/s.closedRounds*100)+'%':'—';$('kpiDenominator').textContent=s.closedRounds?'จาก '+n(s.closedRounds)+' รอบที่ปิดผลแล้ว':'ยังไม่มีรอบที่ปิดผล';$('roundCount').textContent=n(d.rounds.total);$('logCount').textContent=n(d.logs.total);const station=state.options.stations.find(x=>x.code===f.stationCode);$('scope').textContent=(station?station.name:n(s.stationCount)+' สถานี')+(f.unit?' · '+f.unit:'')+(f.round?' · รอบ '+f.round:'')+' · '+dateLabel(f.startDate)+(f.startDate!==f.endDate?' – '+dateLabel(f.endDate):'');$('asOf').textContent='ข้อมูล ณ '+dateTime(d.asOf);renderChart();renderStations();renderRecords();renderGraphs();}
@@ -31,11 +63,42 @@ function tab(name,focus=false){state.tab=name;for(const key of ['round','log']){
 for(const key of ['round','log']){$(key+'Tab').onclick=()=>tab(key);$(key+'Tab').onkeydown=e=>{if(['ArrowLeft','ArrowRight','Home','End'].includes(e.key)){e.preventDefault();tab(e.key==='Home'?'round':e.key==='End'?'log':key==='round'?'log':'round',true);}};}
 $('filterForm').onsubmit=e=>{e.preventDefault();load();};$('filterForm').onchange=()=>{if(state.data)notice('ตัวกรองเปลี่ยนแล้ว กด “แสดงข้อมูล” เพื่ออัปเดตผล');};$('refresh').onclick=()=>load(undefined,true);
 $('stationPrev').onclick=()=>{state.stationPage--;renderStations();};$('stationNext').onclick=()=>{state.stationPage++;renderStations();};for(const [id,delta] of [['recordPrev',-1],['recordNext',1]])$(id).onclick=()=>{const key=state.tab==='round'?'round':'log',data=state.data[key==='round'?'rounds':'logs'];load({...state.data.filters,[key+'Page']:data.page+delta});};
-$('loginForm').onsubmit=async e=>{e.preventDefault();if(!backendUrl){openSettings();return;}if(state.busy)return;busy(true);showError('loginError','');try{const result=await rpc('loginAdmin',{password:$('password').value});state.token=result.adminSessionToken;$('password').value='';const options=await rpc('getAdminOptions');state.options=options;initializeFilters();$('startDate').value=options.today;$('endDate').value=options.today;$('loginPanel').hidden=true;$('logout').hidden=false;connection();busy(false);await load();}catch(e){state.token='';showError('loginError',e.message);connection();}finally{busy(false);}};
-$('logout').onclick=async()=>{if(state.busy)return;busy(true);try{await rpc('logoutAdmin');lock();notice('ออกจากระบบแล้ว');}catch(e){notice(e.message,true);}finally{busy(false);}};
-function openSettings(){$('backendUrl').value=backendUrl;showError('settingsError','');$('settingsDialog').showModal();}
-$('settings').onclick=openSettings;$('closeSettings').onclick=()=>$('settingsDialog').close();
-$('settingsForm').onsubmit=e=>{e.preventDefault();try{const next=validateBackendUrl($('backendUrl').value.trim());if(next===config.patrolUrl)throw new Error('ใช้ URL ของ API Dashboard แยกต่างหาก ไม่ใช่ URL แอป รปภ.');state.api?.destroy();state.api=null;backendUrl=next;try{localStorage.setItem('pea.admin.backend',next);}catch{}lock();$('settingsDialog').close();notice('บันทึก URL แล้ว เข้าสู่ระบบด้วยบัญชี Google Admin และรหัสผ่าน');}catch(e){showError('settingsError',e.message);}};
+$('loginForm').onsubmit=async event=>{
+  event.preventDefault();
+  if(!directAccess||state.busy)return;
+  const password=$('password').value;
+  $('password').value='';
+  busy(true);
+  showError('loginError','');
+  $('accessStatus').textContent='กำลังตรวจสอบสิทธิ์ผู้ดูแล';
+  try{
+    const result=await rpc('loginAdmin',{password});
+    state.token=result.adminSessionToken;
+    state.options=await rpc('getAdminOptions');
+    initializeFilters();
+    $('startDate').value=state.options.today;
+    $('endDate').value=state.options.today;
+    expiryTimer=setTimeout(()=>lock('หมดเวลาเข้าใช้งาน กรุณาเข้าสู่ระบบอีกครั้ง'),Math.max(0,result.expiresAt-Date.now()));
+    $('accessStatus').textContent='';
+    connection();
+    busy(false);
+    await load();
+  }catch(error){
+    lock(error.message.replace(/^ADMIN_SESSION_REQUIRED: /,''));
+    $('password').focus();
+  }
+};
+$('logout').onclick=async()=>{
+  const token=state.token;
+  if(!token)return;
+  lock();
+  $('accessStatus').textContent='ออกจากระบบแล้ว';
+  try{await state.api.call('logoutAdmin',{adminSessionToken:token});}
+  catch{if(!state.token&&!state.busy)$('accessStatus').textContent='ปิดข้อมูลบนหน้านี้แล้ว เซสชันบนเซิร์ฟเวอร์จะหมดอายุตามเวลา';}
+};
+
+
+
 function csvCell(value){const text=String(value??'');return '"'+(/^[=+@\-\t\r]/.test(text)?"'"+text:text).replaceAll('"','""')+'"';}
 $('export').onclick=()=>{if(!state.data)return;const rounds=state.tab==='round',items=state.data[rounds?'rounds':'logs'].items;const headers=rounds?['วันปฏิบัติงาน','รอบตรวจ','สถานี','สถานะ','เช็กอิน']:['เวลาบันทึก','สถานี','รปภ.','จุดตรวจ','รอบ','เวลา','ระยะห่างเมตร'];const rows=items.map(r=>rounds?[r.patrolDate,dateTime(r.scheduledAt),r.stationName,r.status,r.checkinCount]:[r.receivedAt,r.stationName,r.guardName,r.checkpointId,r.round,r.status,r.checkpointDistanceMeters]);const blob=new Blob(['\uFEFF'+[headers,...rows].map(r=>r.map(csvCell).join(',')).join('\r\n')],{type:'text/csv;charset=utf-8'});const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='guard-tour-'+(rounds?'rounds':'checkins')+'-page-'+state.data[rounds?'rounds':'logs'].page+'.csv';a.click();URL.revokeObjectURL(url);};
 const graphIds=['trendGraph','timingGraph','roundGraph','stationGraph'];
@@ -80,6 +143,13 @@ function renderGraphs(){
   graphBars('stationGraph',items,[{key:'value',label,cls:metric==='idelRounds'?'idel':metric==='checkins'?'purple-bar':'patrolled'}],x=>changeScope({stationFilter:x.code}));
 }
 $('stationMetric').onchange=renderGraphs;$('stationLimit').onchange=renderGraphs;
-function showPage(){const name=['overview','charts','details'].includes(location.hash?.slice(1))?location.hash.slice(1):'overview';const titles={overview:'ภาพรวมการเดินตรวจ',charts:'กราฟการเดินตรวจ',details:'ประวัติและรอบตรวจ'};$('pageTitle').textContent=titles[name];$('breadcrumbPage').textContent=titles[name];$('overviewPanels').hidden=name!=='overview';$('chartsPage').hidden=name!=='charts';$('details').hidden=name!=='details';$('timingSection').hidden=name==='charts';document.querySelectorAll('.nav-link,.page-nav a').forEach(a=>{const active=a.getAttribute('href')==='#'+name;a.classList.toggle('active',active);if(active)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');});}
-if(typeof window!=='undefined')window.addEventListener('hashchange',showPage);
+function showPage(name='overview'){const titles={overview:'ภาพรวมการเดินตรวจ',charts:'กราฟการเดินตรวจ',details:'ประวัติและรอบตรวจ'};$('pageTitle').textContent=titles[name];$('breadcrumbPage').textContent=titles[name];$('overviewPanels').hidden=name!=='overview';$('chartsPage').hidden=name!=='charts';$('details').hidden=name!=='details';$('timingSection').hidden=name==='charts';document.querySelectorAll('.nav-link,.page-nav a').forEach(a=>{const active=a.getAttribute('href')==='#'+name;a.classList.toggle('active',active);if(active)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');});}
+document.querySelectorAll('.nav-link,.page-nav a,.brand').forEach(link=>{
+  link.addEventListener('click',event=>{
+    event.preventDefault();
+    showPage(link.getAttribute('href').slice(1));
+  });
+});
 clearGraphs();showPage();connection();busy(false);
+
+if(!directAccess)showError('loginError','กรุณาเปิด Dashboard ผ่าน Google Apps Script');

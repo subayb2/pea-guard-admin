@@ -14,3 +14,39 @@
 @media(max-width:1050px){.nav-link:not(.active){display:flex}.filters fieldset{grid-template-columns:repeat(2,minmax(0,1fr))}.filters .button{grid-column:auto;justify-self:stretch}.station-field{grid-column:auto}.charts-grid{gap:16px}.graph-row{gap:8px}.graph-body{padding-inline:16px}}
 @media(max-width:850px){.charts-grid{grid-template-columns:1fr}.chart-intro{align-items:flex-start;flex-direction:column}.graph-body{max-height:390px}.filters fieldset{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:560px){.page-nav{gap:0}.page-nav a{padding-inline:11px;font-size:11px}.filters fieldset{grid-template-columns:minmax(0,1fr)}.station-field,.filters .button{grid-column:auto}.date-presets{gap:6px}.date-presets button{padding-inline:12px}.chart-intro h2{font-size:17px}.graph-row{grid-template-columns:minmax(80px,1fr) minmax(60px,1fr) auto;font-size:10px}.graph-value{font-size:9px}.chart-controls{padding-inline:16px}.chart-footnote{font-size:10px}}
+
+.access-shell {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  width: min(100% - 48px, 900px);
+  margin: clamp(24px, 10vh, 108px) auto;
+  padding: 0;
+  background: var(--surface);
+  border: 1px solid #ded7e0;
+  border-radius: 16px;
+  overflow: hidden;
+}
+.access-identity, .access-form { padding: clamp(24px, 5vw, 56px); }
+.access-identity { background: var(--sidebar); color: #fff; }
+.access-identity img { display: block; border-radius: 50%; background: #fff; margin-bottom: 24px; }
+.access-identity h1 { font-size: clamp(29px, 4vw, 44px); letter-spacing: -.02em; }
+.access-identity p { color: #e6d7ea; font-size: 16px; margin-top: 15px; max-width: 28ch; }
+.access-form { align-self: center; }
+.access-form h2 { font-size: 22px; }
+.access-form > p { font-size: 16px; color: #595165; margin-top: 8px; }
+.access-form form, .access-action { margin-top: 24px; }
+.access-form label { font-size: 14px; margin-bottom: 6px; }
+.access-form input { font-size: 16px; min-height: 48px; }
+.access-form .primary { min-height: 48px; width: 100%; font-size: 15px; }
+.access-form form .primary { margin-top: 14px; }
+.access-form .login-error { font-size: 14px; margin-top: 8px; }
+.access-form .access-help, .access-form .access-status { font-size: 14px; margin-top: 16px; }
+.access-status:empty { display: none; }
+.account-link { display: inline-flex; align-items: center; min-height: 44px; margin-top: 8px; color: var(--primary); text-decoration: underline; text-underline-offset: 3px; }
+::selection { background: #ead6eb; color: #350d3e; }
+@media (max-width: 620px) {
+  .access-shell { grid-template-columns: 1fr; width: calc(100% - 28px); margin-block: 14px; }
+  .access-identity, .access-form { padding: 24px; }
+  .access-identity img { margin-bottom: 16px; }
+  .access-identity h1 br { display: none; }
+}
