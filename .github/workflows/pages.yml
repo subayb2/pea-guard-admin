@@ -23,8 +23,13 @@ jobs:
           node-version: '24'
       - run: npm test
       - uses: actions/configure-pages@v5
+      - name: Stage the public entry
+        run: |
+          mkdir -p public-site/assets
+          cp web/index.html public-site/
+          cp web/assets/style.css web/assets/pea_logo.png public-site/assets/
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: web
+          path: public-site
       - id: deployment
         uses: actions/deploy-pages@v4
